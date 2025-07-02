@@ -1,0 +1,17 @@
+# Maven
+/target/
+!.mvn/wrapper/maven-wrapper.jar
+
+# IDEs
+/.idea/
+/*.iml
+*.class
+*.log
+*.swp
+*.swo
+*.DS_Store
+
+
+
+# Autres fichiers temporaires
+*.tmp 
