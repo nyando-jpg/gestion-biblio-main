@@ -6,8 +6,6 @@
     <title>Document</title>
 </head>
 <body>
-    <h1>Que voulez-vous faire ?</h1>
-    <!-- <a href="${pageContext.request.contextPath}/adherants">Liste des adhérents</a> -->
     <hr style="margin:30px 0;">
     <h2>Connexion admin</h2>
     <form method="post" action="${pageContext.request.contextPath}/admin-login" style="max-width:350px;margin:0 auto;">
