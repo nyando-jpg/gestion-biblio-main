@@ -1,15 +1,15 @@
 
 package com.springjpa.entity;
 
-import java.util.Set;
+// import java.util.Set;
 
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
+// import jakarta.persistence.JoinTable;
+// import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
@@ -49,13 +49,8 @@ public class Livre {
     @JoinColumn(name = "id_auteur", nullable = false)
     private Auteur auteur;
     
-    @ManyToMany
-    @JoinTable(
-        name = "categorie_livre",
-        joinColumns = @JoinColumn(name = "id_livre"),
-        inverseJoinColumns = @JoinColumn(name = "id_categorie")
-    )
-    private Set<Categorie> categories;
+    // Catégories supprimées pour simplification
+    // private Set<Categorie> categories;
     
     // Constructeurs
     public Livre() {}
@@ -147,11 +142,6 @@ public class Livre {
         this.auteur = auteur;
     }
     
-    public Set<Categorie> getCategories() {
-        return categories;
-    }
-    
-    public void setCategories(Set<Categorie> categories) {
-        this.categories = categories;
-    }
+    // Getters/Setters pour catégories supprimés
+    // Champ temporaire pour le nombre d'exemplaires dispo supprimé
 }
