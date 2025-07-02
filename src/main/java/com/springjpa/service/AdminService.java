@@ -1,3 +1,4 @@
+
 package com.springjpa.service;
 
 import org.springframework.stereotype.Service;
@@ -11,6 +12,13 @@ import com.springjpa.repository.AdminRepository;
 public class AdminService {
     @Autowired
     private AdminRepository adminRepository;
+
+    public boolean checkLogin(String nom, String prenom, String password) {
+        return adminRepository.findAll().stream()
+            .anyMatch(a -> a.getNomAdmin().equals(nom)
+                && a.getPrenomAdmin().equals(prenom)
+                && a.getPassword().equals(password));
+    }
 
     public Admin findById(Integer id){
         return adminRepository.findById(id).get();
