@@ -40,6 +40,15 @@ public class AdherantController {
         Profil profil = adherantService.getProfilById(idProfil);
         Adherant adherant = new Adherant(newId, nomAdherant, prenomAdherant, password, profil);
         adherantService.save(adherant);
+
+        // Ajout automatique dans la table inscription
+        Integer newInscriptionId = adherantService.getNextInscriptionId();
+        java.time.LocalDateTime now = java.time.LocalDateTime.now();
+        com.springjpa.entity.Inscription inscription = new com.springjpa.entity.Inscription(
+            newInscriptionId, now, true, adherant
+        );
+        adherantService.saveInscription(inscription);
+
         return "redirect:/adherants";
     }
 }

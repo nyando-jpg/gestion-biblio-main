@@ -81,4 +81,16 @@ public class Adherant {
     public void setProfil(Profil profil) {
         this.profil = profil;
     }
+
+    // Champ temporaire pour l'affichage du statut (non persisté)
+    @jakarta.persistence.Transient
+    private String statusAdherant;
+
+    public String getStatusAdherant() {
+        return statusAdherant;
+    }
+
+    public void setStatusAdherant(String statusAdherant) {
+        this.statusAdherant = statusAdherant;
+    }
 }

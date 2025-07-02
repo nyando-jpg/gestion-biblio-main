@@ -18,12 +18,19 @@
             <th>ID</th>
             <th>Nom</th>
             <th>Prénom</th>
+            <th>Status</th>
         </tr>
         <c:forEach var="a" items="${adherants}">
             <tr>
                 <td>${a.idAdherant}</td>
                 <td>${a.nomAdherant}</td>
                 <td>${a.prenomAdherant}</td>
+                <td>
+                    <c:choose>
+                        <c:when test="${a.statusAdherant eq 'Actif'}">Actif</c:when>
+                        <c:otherwise>Non actif</c:otherwise>
+                    </c:choose>
+                </td>
             </tr>
         </c:forEach>
     </table>
