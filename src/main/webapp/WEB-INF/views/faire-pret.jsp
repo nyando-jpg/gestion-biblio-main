@@ -13,6 +13,12 @@
 </head>
 <body>
     <h2 style="text-align:center;">Faire un prêt</h2>
+    <c:if test="${not empty error}">
+        <div style="color:red; font-weight:bold; margin-bottom:10px; text-align:center;">${error}</div>
+    </c:if>
+    <c:if test="${not empty success}">
+        <div style="color:green; font-weight:bold; margin-bottom:10px; text-align:center;">${success}</div>
+    </c:if>
     <form method="post" action="${pageContext.request.contextPath}/prets/creer">
         <label for="idAdherant">ID Adhérant :</label>
         <input type="text" id="idAdherant" name="idAdherant" required />

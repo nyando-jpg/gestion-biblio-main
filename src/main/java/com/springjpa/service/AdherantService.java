@@ -50,20 +50,21 @@ public class AdherantService {
     public boolean isInscri(Integer adherantId) {
         var adherantOpt = adherantRepository.findById(adherantId);
         if (adherantOpt.isEmpty()) return false;
-    
+
         var adherant = adherantOpt.get();
         // Récupérer la dernière inscription active
-        var inscriptionOpt = inscriptionRepository.findTopByAdherantIdAdherantAndEtatOrderByDateInscriptionDesc(adherantId, true).get();
-        if (inscriptionOpt == null) return false;
+        var inscriptionOpt = inscriptionRepository.findTopByAdherantIdAdherantAndEtatOrderByDateInscriptionDesc(adherantId, true);
+        if (inscriptionOpt.isEmpty()) return false;
+        var inscription = inscriptionOpt.get();
 
         // Verifier la duree de l'inscription pour le profil
         Profil profil = adherant.getProfil();
         var inscriptionProfil = profilService.getInscriptionProfilByProfil(profil);
         if (inscriptionProfil == null) return false;
-        int duree = inscriptionProfil.getDuree(); 
+        int duree = inscriptionProfil.getDuree();
 
         // Calcul de la date limite
-        var dateLimite = inscriptionOpt.getDateInscription().plusDays(duree);
+        var dateLimite = inscription.getDateInscription().plusDays(duree);
         return dateLimite.isAfter(java.time.LocalDateTime.now());
     }
 

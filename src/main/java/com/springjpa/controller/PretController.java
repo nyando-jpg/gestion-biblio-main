@@ -67,15 +67,34 @@ public class PretController {
             return "faire-pret";
         }
         Admin admin = adminService.findById(idAdmin);
-        Adherant adherant = adherantService.findById(idAdherant);
+        Adherant adherant = null;
+        try {
+            adherant = adherantService.findById(idAdherant);
+        } catch (Exception e) {
+            model.addAttribute("error", "L'adhérent n'existe pas.");
+            java.util.List<TypePret> types = typePretService.findAll();
+            model.addAttribute("typesPret", types);
+            return "faire-pret";
+        }
         Exemplaire exemplaire = exemplaireService.findById(idExemplaire);
         TypePret typePret = typePretService.findById(idTypePret);
+        // Vérifier que l'adhérent est actif (inscription.etat = 1)
+        if (!adherantService.isInscri(idAdherant)) {
+            model.addAttribute("error", "L'adhérent n'est pas actif ou son inscription n'est pas valide.");
+            java.util.List<TypePret> types = typePretService.findAll();
+            model.addAttribute("typesPret", types);
+            return "faire-pret";
+        }
         // Générer un nouvel id_pret (auto ou max+1)
         int newIdPret = pretService.findAll().stream().mapToInt(p -> p.getIdPret()).max().orElse(0) + 1;
         java.time.LocalDateTime now = java.time.LocalDateTime.now();
         Pret pret = new Pret(newIdPret, now, admin, typePret, exemplaire, adherant);
         pretService.save(pret);
-        return "redirect:/";
+        // Ajout d'un message de validation
+        model.addAttribute("success", "Le prêt a bien été enregistré.");
+        java.util.List<TypePret> types = typePretService.findAll();
+        model.addAttribute("typesPret", types);
+        return "faire-pret";
     }
 
  
