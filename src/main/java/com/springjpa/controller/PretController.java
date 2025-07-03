@@ -76,7 +76,21 @@ public class PretController {
             model.addAttribute("typesPret", types);
             return "faire-pret";
         }
-        Exemplaire exemplaire = exemplaireService.findById(idExemplaire);
+        Exemplaire exemplaire = null;
+        try {
+            exemplaire = exemplaireService.findById(idExemplaire);
+        } catch (Exception e) {
+            model.addAttribute("error", "L'exemplaire n'existe pas.");
+            java.util.List<TypePret> types = typePretService.findAll();
+            model.addAttribute("typesPret", types);
+            return "faire-pret";
+        }
+        if (!exemplaire.isDispo()) {
+            model.addAttribute("error", "L'exemplaire n'est pas disponible.");
+            java.util.List<TypePret> types = typePretService.findAll();
+            model.addAttribute("typesPret", types);
+            return "faire-pret";
+        }
         TypePret typePret = typePretService.findById(idTypePret);
         // Vérifier que l'adhérent est actif (inscription.etat = 1)
         if (!adherantService.isInscri(idAdherant)) {
