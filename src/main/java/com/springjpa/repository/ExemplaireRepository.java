@@ -6,4 +6,5 @@ import com.springjpa.entity.Exemplaire;
 
 @Repository
 public interface ExemplaireRepository extends JpaRepository<Exemplaire, Integer> {
+    long countByLivreIdLivreAndDispo(Integer idLivre, boolean dispo);
 }
