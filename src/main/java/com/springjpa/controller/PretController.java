@@ -1,9 +1,18 @@
+
+
 package com.springjpa.controller;
 
 import com.springjpa.entity.Adherant;
 import com.springjpa.entity.Exemplaire;
+import com.springjpa.entity.TypePret;
+import com.springjpa.entity.Pret;
+import com.springjpa.entity.Admin;
 import com.springjpa.service.AdherantService;
 import com.springjpa.service.ExemplaireService;
+import com.springjpa.service.TypePretService;
+import com.springjpa.service.PretService;
+import com.springjpa.service.AdminService;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,75 +29,54 @@ public class PretController {
     @Autowired
     private AdherantService adherantService;
 
+    @Autowired
+    private TypePretService typePretService;
+
 
     @GetMapping("/")
     public String index() {
         return "index"; // Redirection vers la page d'accueil
     }
 
-    @GetMapping("/preter")
-    public String preter(Model model) {
 
-        model.addAttribute("exemplaires", exemplaireService.findAll());
-        model.addAttribute("adherants", adherantService.findAll());
-
-        return "pret";
+    // Affichage du formulaire simple pour faire un prêt (id adhérant et id exemplaire)
+    @GetMapping("/prets/faire")
+    public String fairePretForm(Model model) {
+        java.util.List<TypePret> types = typePretService.findAll();
+        System.out.println("Types trouvés : " + types.size());
+        model.addAttribute("typesPret", types);
+        return "faire-pret";
     }
 
-    @PostMapping("/preter")
-    public String preterLivre(@RequestParam("adherantId") int adherantId,
-                              @RequestParam("exemplaires") int[] exemplaireIds, Model model) {
-        Adherant adherant = adherantService.findById(adherantId);
-        if (adherant.getIdAdherant() == null) {
-            model.addAttribute("error", "Adhérant inexistant.");
-            return "pret";
+    // Traitement du formulaire simple
+    @Autowired
+    private PretService pretService;
+    @Autowired
+    private AdminService adminService;
+
+    @PostMapping("/prets/creer")
+    public String creerPretSimple(@RequestParam("idAdherant") int idAdherant,
+                                 @RequestParam("idExemplaire") int idExemplaire,
+                                 @RequestParam("idTypePret") int idTypePret,
+                                 jakarta.servlet.http.HttpSession session,
+                                 Model model) {
+        // Récupérer l'admin connecté depuis la session
+        Integer idAdmin = (Integer) session.getAttribute("adminId");
+        if (idAdmin == null) {
+            model.addAttribute("error", "Admin non connecté");
+            return "faire-pret";
         }
-
-        // 2. L'adhérant doit être inscrit (à adapter selon ta logique d'inscription)
-        boolean inscrit = adherantService.isInscri(adherant.getIdAdherant());
-        if (!inscrit) {
-            model.addAttribute("error", "Adhérant non inscrit ou inscription inactive.");
-            return "pret";
-        }
-
-        for (int exemplaireId : exemplaireIds) {
-            // 3. Le numéro de l'exemplaire doit exister
-            Exemplaire exemplaireOpt = exemplaireService.findById(exemplaireId);
-            if (exemplaireOpt.getIdExemplaire() == null) {
-                model.addAttribute("error", "Exemplaire n°" + exemplaireId + " inexistant.");
-                return "pret";
-            }
-
-            // 4. L'exemplaire doit être disponible (pas déjà prêté)
-            boolean disponible = exemplaireOpt.isDispo();
-            if (!disponible) {
-                model.addAttribute("error", "Exemplaire n°" + exemplaireId + " non disponible.");
-                return "pret";
-            }
-
-            // 5. Vérifier si l'adhérant n'est pas pénalisé
-            boolean penalise = adherantService.isPenalise(adherant.getIdAdherant()); 
-            if (penalise) {
-                model.addAttribute("error", "Adhérant pénalisé, prêt impossible.");
-                return "pret";
-            }
-
-            // 6. Vérifier que l'adhérant ne dépasse pas le quota pour le type de prêt
-            boolean depasseQuota = false; /* ...compte les prêts en cours de l'adhérant et compare au quota de son profil/type de prêt... */;
-            if (depasseQuota) {
-                model.addAttribute("error", "Quota de prêt dépassé.");
-                return "pret";
-            }
-
-            // 7. L'adhérant peut-il prêter ce livre (ex: restrictions sur certains livres)
-            // boolean peutPreter= false; /* ...vérifie les éventuelles restrictions (profil, catégorie, etc.)... */;
-            // if (!peutPreter) {
-            //     model.addAttribute("error", "Vous ne pouvez pas emprunter ce livre.");
-            //     return "pret";
-            // }
-        }
-        // Redirection vers la page de confirmation ou d'accueil après le prêt
+        Admin admin = adminService.findById(idAdmin);
+        Adherant adherant = adherantService.findById(idAdherant);
+        Exemplaire exemplaire = exemplaireService.findById(idExemplaire);
+        TypePret typePret = typePretService.findById(idTypePret);
+        // Générer un nouvel id_pret (auto ou max+1)
+        int newIdPret = pretService.findAll().stream().mapToInt(p -> p.getIdPret()).max().orElse(0) + 1;
+        java.time.LocalDateTime now = java.time.LocalDateTime.now();
+        Pret pret = new Pret(newIdPret, now, admin, typePret, exemplaire, adherant);
+        pretService.save(pret);
         return "redirect:/";
-        
     }
+
+ 
 }
