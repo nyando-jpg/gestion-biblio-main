@@ -104,6 +104,9 @@ public class PretController {
         java.time.LocalDateTime now = java.time.LocalDateTime.now();
         Pret pret = new Pret(newIdPret, now, admin, typePret, exemplaire, adherant);
         pretService.save(pret);
+        // Mettre l'exemplaire comme non disponible
+        exemplaire.setDispo(false);
+        exemplaireService.save(exemplaire);
         // Ajout d'un message de validation
         model.addAttribute("success", "Le prêt a bien été enregistré.");
         java.util.List<TypePret> types = typePretService.findAll();

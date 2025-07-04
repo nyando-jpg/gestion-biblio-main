@@ -71,4 +71,6 @@ INSERT INTO quota_type_pret (id_profil, id_type_pret, quota) VALUES (2, 2, 5);
 
 
 
--- UPDATE inscription SET etat = 0 WHERE id_inscription = 5;
+UPDATE inscription SET etat = 0 WHERE id_inscription = 5;
+
+UPDATE exemplaire SET etat = 1 WHERE id_exemplaire = 2;
