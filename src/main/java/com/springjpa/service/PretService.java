@@ -2,7 +2,6 @@ package com.springjpa.service;
 
 import org.springframework.stereotype.Service;
 import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import com.springjpa.entity.Pret;
 import com.springjpa.repository.PretRepository;
@@ -11,6 +10,10 @@ import com.springjpa.repository.PretRepository;
 public class PretService {
     @Autowired
     private PretRepository pretRepository;
+
+    public Pret findByAdherantAndExemplaire(Integer idAdherant, Integer idExemplaire) {
+        return pretRepository.findTopByAdherantIdAdherantAndExemplaireIdExemplaireOrderByDateDebutDesc(idAdherant, idExemplaire);
+    }
 
     public Pret findById(Integer id){
         return pretRepository.findById(id).get();

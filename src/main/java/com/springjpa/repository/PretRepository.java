@@ -6,4 +6,5 @@ import com.springjpa.entity.Pret;
 
 @Repository
 public interface PretRepository extends JpaRepository<Pret, Integer> {
+    Pret findTopByAdherantIdAdherantAndExemplaireIdExemplaireOrderByDateDebutDesc(Integer idAdherant, Integer idExemplaire);
 }
