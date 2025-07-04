@@ -2,7 +2,6 @@ package com.springjpa.service;
 
 import org.springframework.stereotype.Service;
 import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import com.springjpa.entity.Reservation;
 import com.springjpa.repository.ReservationRepository;
