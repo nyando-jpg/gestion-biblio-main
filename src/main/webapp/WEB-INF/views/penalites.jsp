@@ -13,6 +13,9 @@
 </head>
 <body>
     <h2 style="text-align:center;">Liste des pénalités</h2>
+    <div style="text-align:center; margin-bottom:20px;">
+        <a href="${pageContext.request.contextPath}/penalites/ajouter" style="background:#28a745;">Ajouter une pénalité</a>
+    </div>
     <table>
         <tr>
             <th>ID</th>
