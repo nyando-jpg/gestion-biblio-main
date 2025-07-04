@@ -99,6 +99,13 @@ public class PretController {
             model.addAttribute("typesPret", types);
             return "faire-pret";
         }
+        // Vérifier que l'adhérent n'a pas de pénalité en cours
+        if (adherantService.isPenalise(idAdherant)) {
+            model.addAttribute("error", "L'adhérent a une pénalité en cours et ne peut pas emprunter.");
+            java.util.List<TypePret> types = typePretService.findAll();
+            model.addAttribute("typesPret", types);
+            return "faire-pret";
+        }
         // Générer un nouvel id_pret (auto ou max+1)
         int newIdPret = pretService.findAll().stream().mapToInt(p -> p.getIdPret()).max().orElse(0) + 1;
         java.time.LocalDateTime now = java.time.LocalDateTime.now();
