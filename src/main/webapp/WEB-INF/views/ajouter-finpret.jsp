@@ -14,6 +14,12 @@
 </head>
 <body>
     <h2 style="text-align:center;">Retour de prêt</h2>
+    <c:if test="${not empty error}">
+        <div style="color: red; text-align: center; margin-bottom: 10px;">${error}</div>
+    </c:if>
+    <c:if test="${not empty success}">
+        <div style="color: green; text-align: center; margin-bottom: 10px;">${success}</div>
+    </c:if>
     <form method="post" action="${pageContext.request.contextPath}/finprets/ajouter">
         <label for="idAdherant">ID Adhérent :</label>
         <input type="number" id="idAdherant" name="idAdherant" required />
