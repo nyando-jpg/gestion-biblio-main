@@ -58,6 +58,7 @@ public class PretController {
     public String creerPretSimple(@RequestParam("idAdherant") int idAdherant,
                                  @RequestParam("idExemplaire") int idExemplaire,
                                  @RequestParam("idTypePret") int idTypePret,
+                                 @RequestParam("datePret") String datePret,
                                  jakarta.servlet.http.HttpSession session,
                                  Model model) {
         // Récupérer l'admin connecté depuis la session
@@ -108,8 +109,22 @@ public class PretController {
         }
         // Générer un nouvel id_pret (auto ou max+1)
         int newIdPret = pretService.findAll().stream().mapToInt(p -> p.getIdPret()).max().orElse(0) + 1;
-        java.time.LocalDateTime now = java.time.LocalDateTime.now();
-        Pret pret = new Pret(newIdPret, now, admin, typePret, exemplaire, adherant);
+        
+        // Convertir la date string en LocalDateTime
+        java.time.LocalDateTime datePretDateTime;
+        try {
+            if (datePret.length() == 16) { // Format "2025-07-25T12:13"
+                datePret += ":00"; // Ajouter les secondes
+            }
+            datePretDateTime = java.time.LocalDateTime.parse(datePret);
+        } catch (Exception e) {
+            model.addAttribute("error", "Format de date invalide. Utilisez le format: AAAA-MM-JJ HH:MM");
+            java.util.List<TypePret> types = typePretService.findAll();
+            model.addAttribute("typesPret", types);
+            return "faire-pret";
+        }
+        
+        Pret pret = new Pret(newIdPret, datePretDateTime, admin, typePret, exemplaire, adherant);
         pretService.save(pret);
         // Mettre l'exemplaire comme non disponible
         exemplaire.setDispo(false);
