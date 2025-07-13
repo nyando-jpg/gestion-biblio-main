@@ -100,13 +100,7 @@ public class PretController {
             model.addAttribute("typesPret", types);
             return "faire-pret";
         }
-        // Vérifier que l'adhérent n'a pas de pénalité en cours
-        if (adherantService.isPenalise(idAdherant)) {
-            model.addAttribute("error", "L'adhérent a une pénalité en cours et ne peut pas emprunter.");
-            java.util.List<TypePret> types = typePretService.findAll();
-            model.addAttribute("typesPret", types);
-            return "faire-pret";
-        }
+
         // Générer un nouvel id_pret (auto ou max+1)
         int newIdPret = pretService.findAll().stream().mapToInt(p -> p.getIdPret()).max().orElse(0) + 1;
         
@@ -119,6 +113,14 @@ public class PretController {
             datePretDateTime = java.time.LocalDateTime.parse(datePret);
         } catch (Exception e) {
             model.addAttribute("error", "Format de date invalide. Utilisez le format: AAAA-MM-JJ HH:MM");
+            java.util.List<TypePret> types = typePretService.findAll();
+            model.addAttribute("typesPret", types);
+            return "faire-pret";
+        }
+        
+        // Vérifier que l'adhérent n'a pas de pénalité en cours à la date de prêt
+        if (adherantService.isPenaliseAtDate(idAdherant, datePretDateTime)) {
+            model.addAttribute("error", "L'adhérent a une pénalité active à la date de prêt choisie et ne peut pas emprunter.");
             java.util.List<TypePret> types = typePretService.findAll();
             model.addAttribute("typesPret", types);
             return "faire-pret";

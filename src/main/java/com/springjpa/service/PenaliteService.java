@@ -41,4 +41,15 @@ public class PenaliteService {
         var finPenalite = penaliteOpt.getDatePenalite().plusDays(penaliteOpt.getDuree());
         return LocalDateTime.now().isBefore(finPenalite);
     }
+    
+    public boolean isPenaliseAtDate(Integer adherantId, LocalDateTime datePret) {
+        Penalite penaliteOpt = penaliteRepository.findTopByAdherantIdAdherantOrderByDatePenaliteDesc(adherantId).orElse(null);
+        if (penaliteOpt == null) return false;
+        
+        LocalDateTime debutPenalite = penaliteOpt.getDatePenalite();
+        LocalDateTime finPenalite = debutPenalite.plusDays(penaliteOpt.getDuree());
+        
+        // Vérifier si la date de prêt tombe dans la période de pénalité
+        return datePret.isAfter(debutPenalite) && datePret.isBefore(finPenalite);
+    }
 }

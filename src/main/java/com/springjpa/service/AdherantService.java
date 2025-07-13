@@ -71,6 +71,10 @@ public class AdherantService {
     public boolean isPenalise(Integer adherantId) {
         return penaliteService.isPenalise(adherantId);
     }
+    
+    public boolean isPenaliseAtDate(Integer adherantId, java.time.LocalDateTime datePret) {
+        return penaliteService.isPenaliseAtDate(adherantId, datePret);
+    }
 
     public Integer getNextAdherantId() {
         // Si la table est vide, retourne 1, sinon max+1
