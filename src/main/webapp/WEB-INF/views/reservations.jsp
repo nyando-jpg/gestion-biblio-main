@@ -14,6 +14,9 @@
 </head>
 <body>
     <h2>Liste des réservations</h2>
+    <div style="text-align:center;">
+        <a href="${pageContext.request.contextPath}/reservations/ajouter" style="display:inline-block;margin:20px 0 20px 0;padding:10px 18px;background:#20c997;color:#fff;text-decoration:none;border-radius:4px;">Faire une réservation</a>
+    </div>
     <table>
         <thead>
             <tr>
