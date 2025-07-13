@@ -19,6 +19,7 @@
             <th>Nom</th>
             <th>Prénom</th>
             <th>Status</th>
+            <th>Action</th>
         </tr>
         <c:forEach var="a" items="${adherants}">
             <tr>
@@ -29,6 +30,19 @@
                     <c:choose>
                         <c:when test="${a.statusAdherant eq 'Actif'}">Actif</c:when>
                         <c:otherwise>Non actif</c:otherwise>
+                    </c:choose>
+                </td>
+                <td>
+                    <c:choose>
+                        <c:when test="${a.statusAdherant eq 'Actif'}">
+                            <span style="color: green;">✓ Actif</span>
+                        </c:when>
+                        <c:otherwise>
+                            <a href="${pageContext.request.contextPath}/adherants/abonnement?id=${a.idAdherant}" 
+                               style="background: #007bff; color: white; padding: 5px 10px; text-decoration: none; border-radius: 3px;">
+                                Faire abonnement
+                            </a>
+                        </c:otherwise>
                     </c:choose>
                 </td>
             </tr>
