@@ -26,4 +26,8 @@ public class PretService {
     public void save(Pret pret){
         pretRepository.save(pret);
     }
+    
+    public long countActivePretsByAdherantAndType(Integer idAdherant, Integer idTypePret) {
+        return pretRepository.countActivePretsByAdherantAndType(idAdherant, idTypePret);
+    }
 }

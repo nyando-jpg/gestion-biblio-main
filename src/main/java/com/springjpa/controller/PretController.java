@@ -12,6 +12,7 @@ import com.springjpa.service.ExemplaireService;
 import com.springjpa.service.TypePretService;
 import com.springjpa.service.PretService;
 import com.springjpa.service.AdminService;
+import com.springjpa.service.QuotaTypePretService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -53,6 +54,9 @@ public class PretController {
     private PretService pretService;
     @Autowired
     private AdminService adminService;
+    
+    @Autowired
+    private QuotaTypePretService quotaTypePretService;
 
     @PostMapping("/prets/creer")
     public String creerPretSimple(@RequestParam("idAdherant") int idAdherant,
@@ -121,6 +125,18 @@ public class PretController {
         // Vérifier que l'adhérent n'a pas de pénalité en cours à la date de prêt
         if (adherantService.isPenaliseAtDate(idAdherant, datePretDateTime)) {
             model.addAttribute("error", "L'adhérent a une pénalité active à la date de prêt choisie et ne peut pas emprunter.");
+            java.util.List<TypePret> types = typePretService.findAll();
+            model.addAttribute("typesPret", types);
+            return "faire-pret";
+        }
+        
+        // Vérifier les quotas de prêt
+        Integer idProfil = adherant.getProfil().getIdProfil();
+        Integer quotaMax = quotaTypePretService.getQuotaByProfilAndTypePret(idProfil, idTypePret);
+        long prêtsActuels = pretService.countActivePretsByAdherantAndType(idAdherant, idTypePret);
+        
+        if (prêtsActuels >= quotaMax) {
+            model.addAttribute("error", "L'adhérent a atteint son quota de livres pour ce type de prêt. Quota maximum : " + quotaMax + " livres. Livres actuellement empruntés : " + prêtsActuels + ". Veuillez d'abord rendre des livres.");
             java.util.List<TypePret> types = typePretService.findAll();
             model.addAttribute("typesPret", types);
             return "faire-pret";
