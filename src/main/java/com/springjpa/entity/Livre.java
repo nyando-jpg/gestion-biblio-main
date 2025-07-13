@@ -49,6 +49,10 @@ public class Livre {
     @JoinColumn(name = "id_auteur", nullable = false)
     private Auteur auteur;
     
+    // Champ temporaire pour le nombre d'exemplaires (non persisté)
+    @jakarta.persistence.Transient
+    private Integer nombreExemplaires;
+    
     // Catégories supprimées pour simplification
     // private Set<Categorie> categories;
     
@@ -142,6 +146,13 @@ public class Livre {
         this.auteur = auteur;
     }
     
+    public Integer getNombreExemplaires() {
+        return nombreExemplaires;
+    }
+    
+    public void setNombreExemplaires(Integer nombreExemplaires) {
+        this.nombreExemplaires = nombreExemplaires;
+    }
+    
     // Getters/Setters pour catégories supprimés
-    // Champ temporaire pour le nombre d'exemplaires dispo supprimé
 }
