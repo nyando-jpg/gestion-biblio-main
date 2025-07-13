@@ -20,6 +20,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import java.util.List;
 
 @Controller
 public class PretController {
@@ -122,6 +123,14 @@ public class PretController {
             return "faire-pret";
         }
         
+        // Vérifier que la date de prêt est après la date d'inscription
+        if (!adherantService.isDatePretAfterInscription(idAdherant, datePretDateTime)) {
+            model.addAttribute("error", "La date de prêt ne peut pas être antérieure à la date d'inscription de l'adhérent.");
+            java.util.List<TypePret> types = typePretService.findAll();
+            model.addAttribute("typesPret", types);
+            return "faire-pret";
+        }
+        
         // Vérifier que l'adhérent n'a pas de pénalité en cours à la date de prêt
         if (adherantService.isPenaliseAtDate(idAdherant, datePretDateTime)) {
             model.addAttribute("error", "L'adhérent a une pénalité active à la date de prêt choisie et ne peut pas emprunter.");
@@ -137,6 +146,15 @@ public class PretController {
         
         if (prêtsActuels >= quotaMax) {
             model.addAttribute("error", "L'adhérent a atteint son quota de livres pour ce type de prêt. Quota maximum : " + quotaMax + " livres. Livres actuellement empruntés : " + prêtsActuels + ". Veuillez d'abord rendre des livres.");
+            java.util.List<TypePret> types = typePretService.findAll();
+            model.addAttribute("typesPret", types);
+            return "faire-pret";
+        }
+        
+        // Vérifier les retards en cours par rapport à la date de prêt choisie
+        if (pretService.hasRetards(idAdherant, idProfil, datePretDateTime)) {
+            List<Pret> pretsEnRetard = pretService.getPretsEnRetard(idAdherant, idProfil, datePretDateTime);
+            model.addAttribute("error", "L'adhérent a des prêts en retard par rapport à la date de prêt choisie (" + pretsEnRetard.size() + " livre(s)). Veuillez d'abord rendre les livres en retard avant d'emprunter.");
             java.util.List<TypePret> types = typePretService.findAll();
             model.addAttribute("typesPret", types);
             return "faire-pret";

@@ -100,4 +100,18 @@ public class AdherantService {
     public void saveInscription(com.springjpa.entity.Inscription inscription) {
         inscriptionRepository.save(inscription);
     }
+    
+    public boolean isDatePretAfterInscription(Integer adherantId, java.time.LocalDateTime datePret) {
+        var adherantOpt = adherantRepository.findById(adherantId);
+        if (adherantOpt.isEmpty()) return false;
+
+        var adherant = adherantOpt.get();
+        // Récupérer la dernière inscription active
+        var inscriptionOpt = inscriptionRepository.findTopByAdherantIdAdherantAndEtatOrderByDateInscriptionDesc(adherantId, true);
+        if (inscriptionOpt.isEmpty()) return false;
+        var inscription = inscriptionOpt.get();
+
+        // Vérifier que la date de prêt est après la date d'inscription
+        return datePret.isAfter(inscription.getDateInscription());
+    }
 }
