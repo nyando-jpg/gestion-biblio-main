@@ -33,6 +33,9 @@
             </c:forEach>
         </select>
 
+        <label for="datePret">Date de prêt :</label>
+        <input type="datetime-local" id="datePret" name="datePret" required />
+
         <button type="submit">Valider le prêt</button>
     </form>
 </body>

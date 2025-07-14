@@ -49,7 +49,15 @@ public class PenaliteController {
             }
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
             LocalDateTime datePenalite = LocalDateTime.parse(datePenaliteStr, formatter);
+            
+            // Générer un nouvel ID pour la pénalité
+            int newIdPenalite = penaliteService.findAll().stream()
+                .mapToInt(p -> p.getIdPenalite())
+                .max()
+                .orElse(0) + 1;
+            
             Penalite penalite = new Penalite();
+            penalite.setIdPenalite(newIdPenalite);
             penalite.setAdherant(adherant);
             penalite.setDuree(duree);
             penalite.setDatePenalite(datePenalite);

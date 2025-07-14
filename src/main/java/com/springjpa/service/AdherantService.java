@@ -71,6 +71,10 @@ public class AdherantService {
     public boolean isPenalise(Integer adherantId) {
         return penaliteService.isPenalise(adherantId);
     }
+    
+    public boolean isPenaliseAtDate(Integer adherantId, java.time.LocalDateTime datePret) {
+        return penaliteService.isPenaliseAtDate(adherantId, datePret);
+    }
 
     public Integer getNextAdherantId() {
         // Si la table est vide, retourne 1, sinon max+1
@@ -95,5 +99,19 @@ public class AdherantService {
 
     public void saveInscription(com.springjpa.entity.Inscription inscription) {
         inscriptionRepository.save(inscription);
+    }
+    
+    public boolean isDatePretAfterInscription(Integer adherantId, java.time.LocalDateTime datePret) {
+        var adherantOpt = adherantRepository.findById(adherantId);
+        if (adherantOpt.isEmpty()) return false;
+
+        var adherant = adherantOpt.get();
+        // Récupérer la dernière inscription active
+        var inscriptionOpt = inscriptionRepository.findTopByAdherantIdAdherantAndEtatOrderByDateInscriptionDesc(adherantId, true);
+        if (inscriptionOpt.isEmpty()) return false;
+        var inscription = inscriptionOpt.get();
+
+        // Vérifier que la date de prêt est après la date d'inscription
+        return datePret.isAfter(inscription.getDateInscription());
     }
 }

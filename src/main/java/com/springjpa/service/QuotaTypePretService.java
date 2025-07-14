@@ -23,4 +23,13 @@ public class QuotaTypePretService {
     public void save(QuotaTypePret quotaTypePret){
         quotaTypePretRepository.save(quotaTypePret);
     }
+    
+    public QuotaTypePret findByProfilAndTypePret(Integer idProfil, Integer idTypePret) {
+        return quotaTypePretRepository.findByProfilIdProfilAndTypePretIdTypePret(idProfil, idTypePret);
+    }
+    
+    public Integer getQuotaByProfilAndTypePret(Integer idProfil, Integer idTypePret) {
+        QuotaTypePret quota = findByProfilAndTypePret(idProfil, idTypePret);
+        return quota != null ? quota.getQuota() : 0;
+    }
 }

@@ -17,7 +17,6 @@ import jakarta.persistence.Table;
 public class Penalite {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_penalite")
     private Integer idPenalite;
 

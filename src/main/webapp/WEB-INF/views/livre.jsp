@@ -23,6 +23,7 @@
             <th>Nb pages</th>
             <th>Éditeur</th>
             <th>Auteur</th>
+            <th>Nb exemplaires</th>
         </tr>
         <c:forEach var="l" items="${livres}">
             <tr>
@@ -35,6 +36,7 @@
                 <td>${l.nbPage}</td>
                 <td>${l.editeur.nomEditeur}</td>
                 <td>${l.auteur.nomAuteur} ${l.auteur.prenomAuteur}</td>
+                <td>${l.nombreExemplaires}</td>
             </tr>
         </c:forEach>
     </table>

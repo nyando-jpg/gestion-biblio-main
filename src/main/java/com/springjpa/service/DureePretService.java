@@ -23,4 +23,9 @@ public class DureePretService {
     public void save(DureePret dureePret){
         dureePretRepository.save(dureePret);
     }
+    
+    public Integer getDureeByProfil(Integer idProfil) {
+        DureePret dureePret = dureePretRepository.findByProfilIdProfil(idProfil);
+        return dureePret != null ? dureePret.getDuree() : 15; // 15 jours par défaut
+    }
 }

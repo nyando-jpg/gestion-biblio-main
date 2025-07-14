@@ -45,10 +45,56 @@ public class AdherantController {
         Integer newInscriptionId = adherantService.getNextInscriptionId();
         java.time.LocalDateTime now = java.time.LocalDateTime.now();
         com.springjpa.entity.Inscription inscription = new com.springjpa.entity.Inscription(
-            newInscriptionId, now, true, adherant
+            newInscriptionId, now, false, adherant
         );
         adherantService.saveInscription(inscription);
 
         return "redirect:/adherants";
+    }
+    
+    // Afficher le formulaire d'abonnement
+    @GetMapping("/adherants/abonnement")
+    public String showAbonnementForm(@RequestParam("id") int idAdherant, Model model) {
+        Adherant adherant = adherantService.findById(idAdherant);
+        model.addAttribute("adherant", adherant);
+        return "faire-abonnement";
+    }
+    
+    // Traiter l'abonnement
+    @PostMapping("/adherants/abonnement")
+    public String traiterAbonnement(@RequestParam("idAdherant") int idAdherant,
+                                   @RequestParam("dateInscription") String dateInscription,
+                                   Model model) {
+        try {
+            Adherant adherant = adherantService.findById(idAdherant);
+            
+            // Convertir la date string en LocalDateTime
+            java.time.LocalDateTime dateInscriptionDateTime;
+            try {
+                if (dateInscription.length() == 16) { // Format "2025-07-25T12:13"
+                    dateInscription += ":00"; // Ajouter les secondes
+                }
+                dateInscriptionDateTime = java.time.LocalDateTime.parse(dateInscription);
+            } catch (Exception e) {
+                model.addAttribute("error", "Format de date invalide. Utilisez le format: AAAA-MM-JJ HH:MM");
+                model.addAttribute("adherant", adherant);
+                return "faire-abonnement";
+            }
+            
+            // Créer une nouvelle inscription avec etat = true
+            Integer newInscriptionId = adherantService.getNextInscriptionId();
+            com.springjpa.entity.Inscription inscription = new com.springjpa.entity.Inscription(
+                newInscriptionId, dateInscriptionDateTime, true, adherant
+            );
+            adherantService.saveInscription(inscription);
+            
+            return "redirect:/adherants";
+            
+        } catch (Exception e) {
+            model.addAttribute("error", "Erreur lors de l'abonnement : " + e.getMessage());
+            Adherant adherant = adherantService.findById(idAdherant);
+            model.addAttribute("adherant", adherant);
+            return "faire-abonnement";
+        }
     }
 }
