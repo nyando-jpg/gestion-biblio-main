@@ -15,6 +15,9 @@ import com.springjpa.service.AdminService;
 import com.springjpa.service.QuotaTypePretService;
 import com.springjpa.service.ReservationService;
 import com.springjpa.service.DureePretService;
+import com.springjpa.service.StatutReservationService;
+import com.springjpa.entity.Reservation;
+import com.springjpa.entity.StatutReservation;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -68,6 +71,9 @@ public class PretController {
     
     @Autowired
     private DureePretService dureePretService;
+
+    @Autowired
+    private StatutReservationService statutReservationService;
 
     @PostMapping("/prets/creer")
     public String creerPretSimple(@RequestParam("idAdherant") int idAdherant,
@@ -217,17 +223,42 @@ public class PretController {
     }
 
     @PostMapping("/prets/prolonger")
-    public String traiterProlongement(@RequestParam("idPret") int idPret, Model model) {
+    public String traiterProlongement(@RequestParam("idPret") int idPret, HttpSession session, Model model) {
         try {
             Pret pret = pretService.findById(idPret);
-            // Vérifier si le prêt est prolongeable (pas de réservation en attente, pas de pénalité, etc.)
-            boolean prolongeable = pretService.isProlongeable(pret);
-            if (!prolongeable) {
-                model.addAttribute("error", "Ce prêt ne peut pas être prolongé (réservation en attente ou pénalité en cours).");
+            // Date de début de la nouvelle réservation = date de fin théorique du prêt
+            Integer idProfil = pret.getAdherant().getProfil().getIdProfil();
+            Integer duree = dureePretService.getDureeByProfil(idProfil);
+            java.time.LocalDateTime dateDebutProlongement = pret.getDateDebut().plusDays(duree);
+            // Vérifier absence de réservation active à la date de prolongement
+            boolean hasReservation = reservationService.hasActiveReservationsBeforeDate(
+                pret.getExemplaire().getIdExemplaire(),
+                dateDebutProlongement.plusSeconds(1)
+            );
+            if (hasReservation) {
+                model.addAttribute("error", "Prolongement impossible : il existe déjà une réservation sur la période du prolongement.");
                 return "prolonger-pret";
             }
-            pretService.prolongerPret(pret);
-            model.addAttribute("success", "Le prêt a été prolongé avec succès.");
+            // Générer un nouvel id_reservation
+            int newIdReservation = reservationService.findAll().stream()
+                .mapToInt(r -> r.getIdReservation())
+                .max()
+                .orElse(0) + 1;
+            // Récupérer l'admin connecté ou le premier admin
+            Integer idAdmin = (Integer) session.getAttribute("adminId");
+            Admin admin = (idAdmin != null) ? adminService.findById(idAdmin) : adminService.findAll().get(0);
+            // Statut "En attente" (id = 1)
+            StatutReservation statut = statutReservationService.findById(1);
+            // Créer la réservation
+            Reservation reservation = new Reservation();
+            reservation.setIdReservation(newIdReservation);
+            reservation.setDateDeReservation(dateDebutProlongement);
+            reservation.setAdmin(admin);
+            reservation.setStatut(statut);
+            reservation.setExemplaire(pret.getExemplaire());
+            reservation.setAdherant(pret.getAdherant());
+            reservationService.saveSansVerif(reservation);
+            model.addAttribute("success", "Prolongement effectué : une nouvelle réservation a été créée à la date de fin du prêt normal.");
         } catch (Exception e) {
             model.addAttribute("error", "Erreur lors du prolongement : " + e.getMessage());
         }

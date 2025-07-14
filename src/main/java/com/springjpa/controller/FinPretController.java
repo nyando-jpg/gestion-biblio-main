@@ -6,6 +6,11 @@ import com.springjpa.entity.Exemplaire;
 import com.springjpa.service.FinPretService;
 import com.springjpa.service.PretService;
 import com.springjpa.service.ExemplaireService;
+import com.springjpa.service.PenaliteService;
+import com.springjpa.service.DureePretService;
+import com.springjpa.service.AdherantService;
+import com.springjpa.entity.Penalite;
+import com.springjpa.entity.Adherant;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -25,6 +30,12 @@ public class FinPretController {
     private PretService pretService;
     @Autowired
     private ExemplaireService exemplaireService;
+    @Autowired
+    private PenaliteService penaliteService;
+    @Autowired
+    private DureePretService dureePretService;
+    @Autowired
+    private AdherantService adherantService;
 
     @GetMapping("/finprets/ajouter")
     public String afficherFormulaireAjoutFinPret() {
@@ -58,6 +69,26 @@ public class FinPretController {
             Exemplaire exemplaire = pret.getExemplaire();
             exemplaire.setDispo(true);
             exemplaireService.save(exemplaire);
+
+            // 6. Vérifier le retard et appliquer une pénalité si besoin
+            Integer idProfil = pret.getAdherant().getProfil().getIdProfil();
+            Integer dureeAutorisee = dureePretService.getDureeByProfil(idProfil);
+            LocalDateTime dateLimite = pret.getDateDebut().plusDays(dureeAutorisee);
+            if (dateFin.isAfter(dateLimite)) {
+                // Générer un nouvel id_penalite
+                int newIdPenalite = penaliteService.findAll().stream()
+                    .mapToInt(p -> p.getIdPenalite())
+                    .max()
+                    .orElse(0) + 1;
+                Penalite penalite = new Penalite();
+                penalite.setIdPenalite(newIdPenalite);
+                penalite.setDuree(10); // 10 jours par défaut
+                penalite.setDatePenalite(dateFin);
+                Adherant adherant = adherantService.findById(idAdherant);
+                penalite.setAdherant(adherant);
+                penaliteService.save(penalite);
+                model.addAttribute("info", "Retour en retard : une pénalité de 10 jours a été appliquée.");
+            }
 
             model.addAttribute("success", "Retour de prêt enregistré avec succès.");
             return "ajouter-finpret";

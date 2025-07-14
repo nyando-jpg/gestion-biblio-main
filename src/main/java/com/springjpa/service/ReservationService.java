@@ -43,6 +43,10 @@ public class ReservationService {
         }
         reservationRepository.save(reservation);
     }
+
+    public void saveSansVerif(Reservation reservation) {
+        reservationRepository.save(reservation);
+    }
     
     /**
      * Vérifie s'il y a des réservations actives pour un exemplaire avant une date donnée
