@@ -6,11 +6,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.springjpa.entity.Reservation;
 import com.springjpa.repository.ReservationRepository;
 import java.time.LocalDateTime;
+import com.springjpa.service.PretService;
+import com.springjpa.entity.Pret;
 
 @Service
 public class ReservationService {
     @Autowired
     private ReservationRepository reservationRepository;
+    @Autowired
+    private PretService pretService;
 
     public Reservation findById(Integer id){
         return reservationRepository.findById(id).get();
@@ -21,6 +25,22 @@ public class ReservationService {
     }
 
     public void save(Reservation reservation){
+        // Vérification de conflit de réservation/pret
+        Integer idExemplaire = reservation.getExemplaire().getIdExemplaire();
+        LocalDateTime dateReservation = reservation.getDateDeReservation();
+        // 1. Vérifier s'il existe une réservation active pour cet exemplaire à la même date
+        boolean conflitReservation = reservationRepository.countActiveReservationsBeforeDate(idExemplaire, dateReservation) > 0;
+        // 2. Vérifier s'il existe un prêt actif pour cet exemplaire à la même période
+        boolean conflitPret = false;
+        for (Pret pret : pretService.findActivePretsByExemplaire(idExemplaire)) {
+            // On suppose que la date de fin de prêt = dateDebut + durée (à adapter si besoin)
+            // Ici, on ne connaît pas la durée exacte, donc on bloque toute réservation si le prêt n'est pas rendu
+            conflitPret = true;
+            break;
+        }
+        if (conflitReservation || conflitPret) {
+            throw new IllegalStateException("Impossible d'insérer la réservation : le livre est déjà réservé ou prêté sur la période demandée.");
+        }
         reservationRepository.save(reservation);
     }
     

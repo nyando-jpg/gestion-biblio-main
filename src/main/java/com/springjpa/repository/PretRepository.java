@@ -23,4 +23,7 @@ public interface PretRepository extends JpaRepository<Pret, Integer> {
     // Trouver les prêts en retard
     @Query("SELECT p FROM Pret p WHERE p.adherant.idAdherant = :idAdherant AND p.idPret NOT IN (SELECT fp.pret.idPret FROM FinPret fp) AND p.dateDebut < :dateLimite")
     List<Pret> findPretsEnRetardByAdherant(@Param("idAdherant") Integer idAdherant, @Param("dateLimite") java.time.LocalDateTime dateLimite);
+
+    @Query("SELECT p FROM Pret p WHERE p.exemplaire.idExemplaire = :idExemplaire AND p.idPret NOT IN (SELECT fp.pret.idPret FROM FinPret fp)")
+    List<Pret> findActivePretsByExemplaire(@Param("idExemplaire") Integer idExemplaire);
 }

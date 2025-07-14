@@ -46,4 +46,8 @@ public class PretService {
         java.time.LocalDateTime dateLimite = datePret.minusDays(duree);
         return pretRepository.findPretsEnRetardByAdherant(idAdherant, dateLimite);
     }
+
+    public List<Pret> findActivePretsByExemplaire(Integer idExemplaire) {
+        return pretRepository.findActivePretsByExemplaire(idExemplaire);
+    }
 }
