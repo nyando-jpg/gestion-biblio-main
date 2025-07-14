@@ -194,5 +194,51 @@ public class PretController {
         return "faire-pret";
     }
 
+    @GetMapping("/prets/prolonger")
+    public String afficherFormulaireProlongement(@RequestParam(value = "idAdherant", required = false) Integer idAdherant, Model model) {
+        if (idAdherant == null) {
+            model.addAttribute("error", "Aucun adhérent sélectionné. Veuillez choisir un adhérent.");
+            model.addAttribute("adherants", adherantService.findAll());
+            return "saisir-adherant-prolongement";
+        }
+        try {
+            List<Pret> pretsActifs = pretService.findActivePretsByAdherant(idAdherant);
+            model.addAttribute("pretsActifs", pretsActifs);
+            model.addAttribute("idAdherant", idAdherant);
+            if (pretsActifs == null || pretsActifs.isEmpty()) {
+                model.addAttribute("info", "Cet adhérent n'a aucun prêt actif à prolonger.");
+            }
+            return "prolonger-pret";
+        } catch (Exception e) {
+            model.addAttribute("error", "Adhérent invalide ou erreur interne. Veuillez réessayer.");
+            model.addAttribute("adherants", adherantService.findAll());
+            return "saisir-adherant-prolongement";
+        }
+    }
+
+    @PostMapping("/prets/prolonger")
+    public String traiterProlongement(@RequestParam("idPret") int idPret, Model model) {
+        try {
+            Pret pret = pretService.findById(idPret);
+            // Vérifier si le prêt est prolongeable (pas de réservation en attente, pas de pénalité, etc.)
+            boolean prolongeable = pretService.isProlongeable(pret);
+            if (!prolongeable) {
+                model.addAttribute("error", "Ce prêt ne peut pas être prolongé (réservation en attente ou pénalité en cours).");
+                return "prolonger-pret";
+            }
+            pretService.prolongerPret(pret);
+            model.addAttribute("success", "Le prêt a été prolongé avec succès.");
+        } catch (Exception e) {
+            model.addAttribute("error", "Erreur lors du prolongement : " + e.getMessage());
+        }
+        return "prolonger-pret";
+    }
+
+    @GetMapping("/prets/prolongement-form")
+    public String afficherFormulaireSaisieAdherant(Model model) {
+        model.addAttribute("adherants", adherantService.findAll());
+        return "saisir-adherant-prolongement";
+    }
+
  
 }
