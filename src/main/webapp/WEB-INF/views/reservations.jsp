@@ -2,30 +2,30 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Liste des réservations</title>
+    <title>Réservations</title>
     <style>
-        table { width: 90%; margin: 30px auto; border-collapse: collapse; }
-        th, td { border: 1px solid #ccc; padding: 8px 12px; text-align: center; }
-        th { background: #17a2b8; color: #fff; }
-        tr:nth-child(even) { background: #f9f9f9; }
-        h2 { text-align: center; }
-        a { display: inline-block; margin: 20px; }
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        form { max-width: 400px; margin: 0 auto 30px auto; padding: 20px; border: 1px solid #ccc; border-radius: 6px; }
+        label { display: block; margin-bottom: 8px; }
+        input, select, button { width: 100%; margin-bottom: 16px; padding: 6px; box-sizing: border-box; }
+        a { display: block; text-align: center; margin: 20px auto; text-decoration: underline; }
+        h1, h2 { text-align: center; }
     </style>
 </head>
 <body>
-    <h2>Liste des réservations</h2>
+    <h2>Liste des reservations</h2>
     <div style="text-align:center;">
-        <a href="${pageContext.request.contextPath}/reservations/ajouter" style="display:inline-block;margin:20px 0 20px 0;padding:10px 18px;background:#20c997;color:#fff;text-decoration:none;border-radius:4px;">Faire une réservation</a>
+        <a href="${pageContext.request.contextPath}/reservations/ajouter" style="display:inline-block;margin:20px 0 20px 0;padding:10px 18px;background:#20c997;color:#fff;text-decoration:none;border-radius:4px;">Faire une reservation</a>
     </div>
     <table>
         <thead>
             <tr>
                 <th>ID</th>
-                <th>Date de réservation</th>
+                <th>Date de reservation</th>
                 <th>Admin</th>
                 <th>Statut</th>
                 <th>Exemplaire</th>
-                <th>Adhérent</th>
+                <th>Adherent</th>
             </tr>
         </thead>
         <tbody>
@@ -42,7 +42,7 @@
         </tbody>
     </table>
     <div style="text-align:center;">
-        <a href="${pageContext.request.contextPath}/admin-home">Retour accueil admin</a>
+        <a href="${pageContext.request.contextPath}/admin/home"><button type="button">Retour Admin</button></a>
     </div>
 </body>
 </html>
