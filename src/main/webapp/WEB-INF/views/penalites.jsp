@@ -13,16 +13,16 @@
     </style>
 </head>
 <body>
-    <h2 style="text-align:center;">Liste des pénalités</h2>
+    <h2 style="text-align:center;">Liste des pénalites</h2>
     <div style="text-align:center; margin-bottom:20px;">
         <a href="${pageContext.request.contextPath}/penalites/ajouter" style="background:#28a745;">Ajouter une pénalité</a>
     </div>
     <table>
         <tr>
             <th>ID</th>
-            <th>ID Adhérent</th>
-            <th>Date pénalité</th>
-            <th>Durée (jours)</th>
+            <th>ID Adherent</th>
+            <th>Date penalite</th>
+            <th>Duree (jours)</th>
         </tr>
         <c:forEach var="p" items="${penalites}">
             <tr>

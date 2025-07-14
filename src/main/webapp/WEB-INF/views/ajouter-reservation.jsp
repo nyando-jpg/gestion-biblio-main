@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Ajouter une réservation</title>
+    <title>Ajouter une reservation</title>
     <style>
         body { font-family: Arial, sans-serif; margin: 40px; }
         form { max-width: 400px; margin: 0 auto 30px auto; padding: 20px; border: 1px solid #ccc; border-radius: 6px; }
@@ -13,7 +13,7 @@
     </style>
 </head>
 <body>
-    <h2>Faire une réservation</h2>
+    <h2>Faire une reservation</h2>
     
     <c:if test="${not empty success}">
         <div style="background-color: #d4edda; color: #155724; padding: 10px; margin: 10px 0; border: 1px solid #c3e6cb;">
@@ -29,9 +29,9 @@
     
     <form action="${pageContext.request.contextPath}/reservations/creer" method="post">
         <div>
-            <label for="idAdherant">Adhérent :</label>
+            <label for="idAdherant">Adherent :</label>
             <select name="idAdherant" id="idAdherant" required>
-                <option value="">-- Sélectionner un adhérent --</option>
+                <option value="">-- Selectionner un adherent --</option>
                 <c:forEach var="adherant" items="${adherants}">
                     <option value="${adherant.idAdherant}">
                         ${adherant.nomAdherant} ${adherant.prenomAdherant} 
@@ -55,14 +55,14 @@
         </div>
         
         <div>
-            <label for="dateReservation">Date de réservation :</label>
+            <label for="dateReservation">Date de reservation :</label>
             <input type="datetime-local" name="dateReservation" id="dateReservation" required>
         </div>
         
-        <button type="submit">Créer la réservation</button>
+        <button type="submit">Créer la reservation</button>
     </form>
     
-    <a href="${pageContext.request.contextPath}/reservations">Retour à la liste des réservations</a>
+    <a href="${pageContext.request.contextPath}/reservations">Retour à la liste des reservations</a>
     <a href="${pageContext.request.contextPath}/admin/home"><button type="button">Retour Admin</button></a>
 </body>
 </html>

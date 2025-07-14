@@ -24,7 +24,7 @@
             <th>Titre</th>
             <th>ISBN</th>
             <th>Langue</th>
-            <th>Année</th>
+            <th>Annee</th>
             <th>Synopsis</th>
             <th>Nb pages</th>
             <th>Éditeur</th>

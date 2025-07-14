@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Ajouter un retour de prêt</title>
+    <title>Ajouter un retour de pret</title>
     <style>
         body { font-family: Arial, sans-serif; margin: 40px; }
         form { max-width: 400px; margin: 0 auto 30px auto; padding: 20px; border: 1px solid #ccc; border-radius: 6px; }
@@ -13,7 +13,7 @@
     </style>
 </head>
 <body>
-    <h2 style="text-align:center;">Retour de prêt</h2>
+    <h2 style="text-align:center;">Retour de pret</h2>
     <c:if test="${not empty error}">
         <div style="color: red; text-align: center; margin-bottom: 10px;">${error}</div>
     </c:if>
@@ -21,7 +21,7 @@
         <div style="color: green; text-align: center; margin-bottom: 10px;">${success}</div>
     </c:if>
     <form method="post" action="${pageContext.request.contextPath}/finprets/ajouter">
-        <label for="idAdherant">ID Adhérent :</label>
+        <label for="idAdherant">ID Adherent :</label>
         <input type="number" id="idAdherant" name="idAdherant" required />
 
         <label for="idExemplaire">ID Exemplaire :</label>
@@ -34,7 +34,6 @@
     </form>
     <div style="text-align:center;">
         <a href="${pageContext.request.contextPath}/admin/home"><button type="button">Retour Admin</button></a>
-        <a href="${pageContext.request.contextPath}/admin-home">Retour accueil admin</a>
     </div>
 </body>
 </html>

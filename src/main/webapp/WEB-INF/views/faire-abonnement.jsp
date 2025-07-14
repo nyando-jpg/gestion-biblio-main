@@ -22,7 +22,7 @@
     </c:if>
     
     <div style="margin: 20px 0;">
-        <strong>Adhérent :</strong> ${adherant.nomAdherant} ${adherant.prenomAdherant} (ID: ${adherant.idAdherant})
+        <strong>Adherent :</strong> ${adherant.nomAdherant} ${adherant.prenomAdherant} (ID: ${adherant.idAdherant})
     </div>
     
     <form action="${pageContext.request.contextPath}/adherants/abonnement" method="post">

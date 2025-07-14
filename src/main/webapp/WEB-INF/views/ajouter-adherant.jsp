@@ -13,12 +13,12 @@
     </style>
 </head>
 <body>
-    <h2 style="text-align:center;">Ajouter un nouvel adhérent</h2>
+    <h2 style="text-align:center;">Ajouter un nouvel adherent</h2>
     <form method="post" action="${pageContext.request.contextPath}/ajouter-adherant">
         <label for="nom">Nom :</label>
         <input type="text" id="nom" name="nomAdherant" required />
 
-        <label for="prenom">Prénom :</label>
+        <label for="prenom">Prenom :</label>
         <input type="text" id="prenom" name="prenomAdherant" required />
 
         <label for="password">Mot de passe :</label>

@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Ajouter une pénalité</title>
+    <title>Ajouter une penalite</title>
     <style>
         body { font-family: Arial, sans-serif; margin: 40px; }
         form { max-width: 400px; margin: 0 auto 30px auto; padding: 20px; border: 1px solid #ccc; border-radius: 6px; }
@@ -13,7 +13,7 @@
     </style>
 </head>
 <body>
-    <h2 style="text-align:center;">Ajouter une pénalité</h2>
+    <h2 style="text-align:center;">Ajouter une penalite</h2>
     <c:if test="${not empty success}">
         <div style="color:green; font-weight:bold; margin-bottom:10px; text-align:center;">${success}</div>
     </c:if>
@@ -21,19 +21,19 @@
         <div style="color:red; font-weight:bold; margin-bottom:10px; text-align:center;">${error}</div>
     </c:if>
     <form method="post" action="${pageContext.request.contextPath}/penalites/ajouter">
-        <label for="idAdherant">ID Adhérent :</label>
+        <label for="idAdherant">ID Adherent :</label>
         <input type="number" id="idAdherant" name="idAdherant" required />
 
-        <label for="duree">Durée (jours) :</label>
+        <label for="duree">Duree (jours) :</label>
         <input type="number" id="duree" name="duree" required />
 
-        <label for="datePenalite">Date pénalité :</label>
+        <label for="datePenalite">Date penalite :</label>
         <input type="datetime-local" id="datePenalite" name="datePenalite" required />
 
         <button type="submit">Ajouter</button>
     </form>
     <div style="text-align:center;">
-        <a href="${pageContext.request.contextPath}/penalites">Retour à la liste des pénalités</a>
+        <a href="${pageContext.request.contextPath}/penalites">Retour à la liste des penalites</a>
         <a href="${pageContext.request.contextPath}/admin/home"><button type="button">Retour Admin</button></a>
     </div>
 </body>
