@@ -31,5 +31,6 @@
         <br><br>
         <button type="submit">Valider le pret</button>
     </form>
+    <a href="${pageContext.request.contextPath}/prets/prolongement-form">Prolonger un prêt</a>
 </body>
 </html>
