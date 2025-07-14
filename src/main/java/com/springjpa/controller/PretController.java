@@ -13,6 +13,8 @@ import com.springjpa.service.TypePretService;
 import com.springjpa.service.PretService;
 import com.springjpa.service.AdminService;
 import com.springjpa.service.QuotaTypePretService;
+import com.springjpa.service.ReservationService;
+import com.springjpa.service.DureePretService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -21,6 +23,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import java.util.List;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 
 @Controller
 public class PretController {
@@ -58,6 +62,12 @@ public class PretController {
     
     @Autowired
     private QuotaTypePretService quotaTypePretService;
+    
+    @Autowired
+    private ReservationService reservationService;
+    
+    @Autowired
+    private DureePretService dureePretService;
 
     @PostMapping("/prets/creer")
     public String creerPretSimple(@RequestParam("idAdherant") int idAdherant,
@@ -155,6 +165,18 @@ public class PretController {
         if (pretService.hasRetards(idAdherant, idProfil, datePretDateTime)) {
             List<Pret> pretsEnRetard = pretService.getPretsEnRetard(idAdherant, idProfil, datePretDateTime);
             model.addAttribute("error", "L'adhérent a des prêts en retard par rapport à la date de prêt choisie (" + pretsEnRetard.size() + " livre(s)). Veuillez d'abord rendre les livres en retard avant d'emprunter.");
+            java.util.List<TypePret> types = typePretService.findAll();
+            model.addAttribute("typesPret", types);
+            return "faire-pret";
+        }
+        
+        // Calculer la date de fin de prêt
+        Integer dureePret = dureePretService.getDureeByProfil(idProfil);
+        LocalDateTime dateFinPret = datePretDateTime.plus(dureePret, ChronoUnit.DAYS);
+        
+        // Vérifier s'il y a des réservations actives pour cet exemplaire avant la date de fin de prêt
+        if (reservationService.hasActiveReservationsBeforeDate(idExemplaire, dateFinPret)) {
+            model.addAttribute("error", "Ce livre a des réservations actives avant la date de fin de prêt (" + dateFinPret.format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")) + "). Le prêt ne peut pas être effectué.");
             java.util.List<TypePret> types = typePretService.findAll();
             model.addAttribute("typesPret", types);
             return "faire-pret";
