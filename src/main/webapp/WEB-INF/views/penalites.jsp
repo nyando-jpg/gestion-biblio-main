@@ -2,13 +2,14 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Liste des pénalités</title>
+    <title>Pénalités</title>
     <style>
-        table { border-collapse: collapse; width: 80%; margin: 30px auto; }
-        th, td { border: 1px solid #ccc; padding: 8px 12px; text-align: center; }
-        th { background: #f2f2f2; }
-        a { display: inline-block; margin: 20px; padding: 10px 18px; background: #007bff; color: #fff; text-decoration: none; border-radius: 4px; }
-        a:hover { background: #0056b3; }
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        form { max-width: 400px; margin: 0 auto 30px auto; padding: 20px; border: 1px solid #ccc; border-radius: 6px; }
+        label { display: block; margin-bottom: 8px; }
+        input, select, button { width: 100%; margin-bottom: 16px; padding: 6px; box-sizing: border-box; }
+        a { display: block; text-align: center; margin: 20px auto; text-decoration: underline; }
+        h1, h2 { text-align: center; }
     </style>
 </head>
 <body>
@@ -32,5 +33,6 @@
             </tr>
         </c:forEach>
     </table>
+    <a href="${pageContext.request.contextPath}/admin/home"><button type="button">Retour Admin</button></a>
 </body>
 </html>

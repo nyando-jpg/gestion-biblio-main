@@ -2,14 +2,14 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Retour de prêt</title>
+    <title>Ajouter un retour de prêt</title>
     <style>
-        form { width: 350px; margin: 40px auto; padding: 20px; border: 1px solid #ccc; border-radius: 6px; background: #f9f9f9; }
-        label { display: block; margin-bottom: 8px; font-weight: bold; }
-        input[type="number"], input[type="datetime-local"] { width: 100%; padding: 8px; margin-bottom: 16px; border: 1px solid #ccc; border-radius: 4px; }
-        button { padding: 10px 20px; background: #6c757d; color: #fff; border: none; border-radius: 4px; cursor: pointer; }
-        button:hover { background: #343a40; }
-        a { display: inline-block; margin-top: 20px; }
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        form { max-width: 400px; margin: 0 auto 30px auto; padding: 20px; border: 1px solid #ccc; border-radius: 6px; }
+        label { display: block; margin-bottom: 8px; }
+        input, select, button { width: 100%; margin-bottom: 16px; padding: 6px; box-sizing: border-box; }
+        a { display: block; text-align: center; margin: 20px auto; text-decoration: underline; }
+        h1, h2 { text-align: center; }
     </style>
 </head>
 <body>
@@ -33,6 +33,7 @@
         <button type="submit">Valider le retour</button>
     </form>
     <div style="text-align:center;">
+        <a href="${pageContext.request.contextPath}/admin/home"><button type="button">Retour Admin</button></a>
         <a href="${pageContext.request.contextPath}/admin-home">Retour accueil admin</a>
     </div>
 </body>

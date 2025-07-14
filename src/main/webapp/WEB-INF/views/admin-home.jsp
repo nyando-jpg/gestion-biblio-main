@@ -2,6 +2,11 @@
 <html>
 <head>
     <title>Accueil Admin</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        a { display: block; text-align: center; margin: 20px auto; text-decoration: underline; }
+        h2 { text-align: center; }
+    </style>
 </head>
 <body>
     <h2>Bienvenue, admin !</h2>
