@@ -1,0 +1,90 @@
+# Cahier des charges – Application de gestion de bibliothèque
+
+## 1. Gestion des livres
+- **Fonctionnalités :**
+  - Ajouter, modifier, supprimer des livres.
+  - Associer un livre à un auteur, un éditeur, une ou plusieurs catégories.
+  - Afficher la liste des livres avec leurs informations (titre, ISBN, langue, année, synopsis, nombre de pages, éditeur, auteur, nombre d’exemplaires disponibles).
+- **Règles de gestion :**
+  - Un livre doit obligatoirement avoir un auteur et un éditeur.
+  - Un livre peut appartenir à plusieurs catégories.
+  - Le nombre d’exemplaires est calculé dynamiquement.
+
+## 2. Gestion des exemplaires
+- **Fonctionnalités :**
+  - Ajouter, modifier, supprimer des exemplaires de livres.
+  - Indiquer la disponibilité de chaque exemplaire.
+- **Règles de gestion :**
+  - Un exemplaire appartient à un seul livre.
+  - Un exemplaire ne peut être prêté ou réservé que s’il est disponible.
+
+## 3. Gestion des adhérents
+- **Fonctionnalités :**
+  - Ajouter, modifier, supprimer des adhérents.
+  - Associer un profil à chaque adhérent (ex : étudiant, professeur).
+  - Gérer l’inscription et l’état (actif/non actif) de chaque adhérent.
+- **Règles de gestion :**
+  - Un adhérent doit avoir un profil qui définit ses quotas de prêt et de réservation.
+  - Un adhérent ne peut pas emprunter ou réserver s’il n’est pas actif.
+
+## 4. Gestion des profils
+- **Fonctionnalités :**
+  - Définir des profils (ex : étudiant, professeur) avec des quotas de prêt et de réservation.
+- **Règles de gestion :**
+  - Chaque profil a un quota maximum de prêts et de réservations simultanés.
+  - La durée de prêt dépend du profil.
+
+## 5. Gestion des prêts
+- **Fonctionnalités :**
+  - Enregistrer un prêt d’exemplaire à un adhérent.
+  - Gérer la date de début et la date de fin de prêt.
+  - Afficher la liste des prêts en cours et terminés.
+- **Règles de gestion :**
+  - Un adhérent ne peut pas dépasser son quota de prêts (défini par son profil).
+  - Un exemplaire ne peut être prêté que s’il est disponible.
+  - Un prêt est actif tant qu’il n’a pas de date de fin (fin_pret).
+  - Un adhérent ayant des retards ne peut pas effectuer de nouveaux prêts.
+
+## 6. Gestion des réservations
+- **Fonctionnalités :**
+  - Permettre à un adhérent de réserver un exemplaire.
+  - Gérer le statut de la réservation (en attente, validée, etc.).
+  - Afficher la liste des réservations.
+- **Règles de gestion :**
+  - Un adhérent ne peut pas dépasser son quota de réservations (défini par son profil).
+  - Un exemplaire ne peut être réservé que s’il n’est pas déjà réservé ou prêté à la même période.
+  - Un adhérent ne peut pas réserver s’il a des retards ou des pénalités.
+
+## 7. Gestion des pénalités
+- **Fonctionnalités :**
+  - Enregistrer une pénalité pour un adhérent en cas de retard.
+  - Gérer la durée et la date de la pénalité.
+- **Règles de gestion :**
+  - Un adhérent pénalisé ne peut pas emprunter ni réserver pendant la durée de la pénalité.
+
+## 8. Gestion des administrateurs
+- **Fonctionnalités :**
+  - Authentification des administrateurs.
+  - Gestion des opérations (ajout, modification, suppression) sur tous les modules.
+- **Règles de gestion :**
+  - Seuls les administrateurs peuvent accéder à l’interface d’administration.
+
+## 9. Gestion des catégories, auteurs, éditeurs
+- **Fonctionnalités :**
+  - Ajouter, modifier, supprimer des catégories, auteurs, éditeurs.
+  - Associer ces entités aux livres.
+- **Règles de gestion :**
+  - Un livre doit avoir un auteur et un éditeur.
+  - Les catégories sont optionnelles mais recommandées pour le classement.
+
+---
+
+## Synthèse des principales règles de gestion
+
+- **Quota de prêt et réservation** : Dépend du profil de l’adhérent.
+- **Disponibilité des exemplaires** : Un exemplaire ne peut être prêté ou réservé que s’il est disponible.
+- **Retards et pénalités** : Un adhérent en retard ou pénalisé ne peut pas emprunter ni réserver.
+- **Statut d’adhérent** : Seuls les adhérents actifs peuvent emprunter ou réserver.
+- **Gestion des conflits** : Impossible de réserver ou prêter un exemplaire déjà réservé ou prêté pour la même période.
+
+---

@@ -15,7 +15,7 @@ public class PretService {
     private PretRepository pretRepository;
     
     @Autowired
-    private DureePretService dureePretService;
+    public DureePretService dureePretService;
 
     @Autowired
     private ReservationService reservationService;

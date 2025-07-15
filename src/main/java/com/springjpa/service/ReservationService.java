@@ -25,18 +25,22 @@ public class ReservationService {
     }
 
     public void save(Reservation reservation){
-        // Vérification de conflit de réservation/pret
         Integer idExemplaire = reservation.getExemplaire().getIdExemplaire();
         LocalDateTime dateReservation = reservation.getDateDeReservation();
         // 1. Vérifier s'il existe une réservation active pour cet exemplaire à la même date
         boolean conflitReservation = reservationRepository.countActiveReservationsBeforeDate(idExemplaire, dateReservation) > 0;
-        // 2. Vérifier s'il existe un prêt actif pour cet exemplaire à la même période
+        // 2. Vérifier s'il existe un prêt qui couvre la date de réservation
         boolean conflitPret = false;
         for (Pret pret : pretService.findActivePretsByExemplaire(idExemplaire)) {
-            // On suppose que la date de fin de prêt = dateDebut + durée (à adapter si besoin)
-            // Ici, on ne connaît pas la durée exacte, donc on bloque toute réservation si le prêt n'est pas rendu
-            conflitPret = true;
-            break;
+            // Calculer la date de fin de prêt prévue
+            Integer idProfil = pret.getAdherant().getProfil().getIdProfil();
+            int dureePret = pretService.dureePretService.getDureeByProfil(idProfil);
+            LocalDateTime dateFinPrevue = pret.getDateDebut().plusDays(dureePret);
+            // Si la date de réservation est comprise entre la date de début et la date de fin prévue du prêt, il y a conflit
+            if (!dateReservation.isAfter(dateFinPrevue)) {
+                conflitPret = true;
+                break;
+            }
         }
         if (conflitReservation || conflitPret) {
             throw new IllegalStateException("Impossible d'insérer la réservation : le livre est déjà réservé ou prêté sur la période demandée.");
