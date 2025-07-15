@@ -28,4 +28,12 @@ public class DureePretService {
         DureePret dureePret = dureePretRepository.findByProfilIdProfil(idProfil);
         return dureePret != null ? dureePret.getDuree() : 15; // 15 jours par défaut
     }
+
+    public Integer getDureeByProfilEtType(Integer idProfil, String typePret) {
+        if (typePret != null && typePret.equalsIgnoreCase("Normal")) {
+            return 1;
+        } else {
+            return getDureeByProfil(idProfil);
+        }
+    }
 }

@@ -43,14 +43,14 @@ public class PretService {
         return pretRepository.countActivePretsByAdherantAndType(idAdherant, idTypePret);
     }
     
-    public boolean hasRetards(Integer idAdherant, Integer idProfil, java.time.LocalDateTime datePret) {
-        Integer duree = dureePretService.getDureeByProfil(idProfil);
+    public boolean hasRetards(Integer idAdherant, Integer idProfil, java.time.LocalDateTime datePret, String typePret) {
+        Integer duree = dureePretService.getDureeByProfilEtType(idProfil, typePret);
         java.time.LocalDateTime dateLimite = datePret.minusDays(duree);
         return pretRepository.hasRetardsByAdherant(idAdherant, dateLimite);
     }
     
-    public List<Pret> getPretsEnRetard(Integer idAdherant, Integer idProfil, java.time.LocalDateTime datePret) {
-        Integer duree = dureePretService.getDureeByProfil(idProfil);
+    public List<Pret> getPretsEnRetard(Integer idAdherant, Integer idProfil, java.time.LocalDateTime datePret, String typePret) {
+        Integer duree = dureePretService.getDureeByProfilEtType(idProfil, typePret);
         java.time.LocalDateTime dateLimite = datePret.minusDays(duree);
         return pretRepository.findPretsEnRetardByAdherant(idAdherant, dateLimite);
     }
@@ -66,9 +66,10 @@ public class PretService {
     public boolean isProlongeable(Pret pret) {
         // Vérifier si l'exemplaire est dispo
         boolean dispo = pret.getExemplaire().isDispo();
-        // Durée de prolongement selon le profil
+        // Durée de prolongement selon le type de prêt
         Integer idProfil = pret.getAdherant().getProfil().getIdProfil();
-        Integer duree = dureePretService.getDureeByProfil(idProfil);
+        String typePret = pret.getTypePret().getType();
+        Integer duree = dureePretService.getDureeByProfilEtType(idProfil, typePret);
         java.time.LocalDateTime nouvelleDateFin = pret.getDateDebut().plusDays(duree * 2); // double durée
         // Vérifier s'il y a une réservation active sur la période du prolongement
         boolean hasReservation = reservationService.hasActiveReservationsBeforeDate(
@@ -81,10 +82,10 @@ public class PretService {
     }
 
     public void prolongerPret(Pret pret) {
-        // Prolonger selon la durée du profil
+        // Prolonger selon la durée du type de prêt
         Integer idProfil = pret.getAdherant().getProfil().getIdProfil();
-        Integer duree = dureePretService.getDureeByProfil(idProfil);
-        // On suppose que la date de début ne change pas, on ajoute la durée à la date de début
+        String typePret = pret.getTypePret().getType();
+        Integer duree = dureePretService.getDureeByProfilEtType(idProfil, typePret);
         java.time.LocalDateTime nouvelleDateFin = pret.getDateDebut().plusDays(duree * 2); // double durée
         // Ici, il faudrait mettre à jour la date de fin dans FinPret, ou gérer la logique selon ton modèle
         // Pour l'instant, on ne fait que simuler (à adapter selon la structure de FinPret)

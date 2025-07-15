@@ -63,6 +63,15 @@
             <input type="datetime-local" name="dateReservation" id="dateReservation" required>
         </div>
         
+        <div>
+            <label for="idTypePret">Type de prêt :</label>
+            <select name="idTypePret" id="idTypePret" required>
+                <c:forEach var="type" items="${typesPret}">
+                    <option value="${type.idTypePret}">${type.type}</option>
+                </c:forEach>
+            </select>
+        </div>
+        
         <button type="submit">Créer la reservation</button>
     </form>
     

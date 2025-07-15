@@ -24,6 +24,9 @@ public class Inscription {
     @Column(name = "etat")
     private Boolean etat;
     
+    @Column(name = "date_fin")
+    private LocalDateTime dateFin;
+    
     @ManyToOne
     @JoinColumn(name = "id_adherant", nullable = false)
     private Adherant adherant;
@@ -71,4 +74,7 @@ public class Inscription {
     public void setAdherant(Adherant adherant) {
         this.adherant = adherant;
     }
+
+    public LocalDateTime getDateFin() { return dateFin; }
+    public void setDateFin(LocalDateTime dateFin) { this.dateFin = dateFin; }
 }

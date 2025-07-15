@@ -165,3 +165,9 @@ CREATE TABLE quota_type_pret(
    FOREIGN KEY(id_profil) REFERENCES profil(id_profil),
    FOREIGN KEY(id_type_pret) REFERENCES type_pret(id_type_pret)
 );
+
+
+ALTER TABLE reservation ADD COLUMN id_type_pret INT;
+UPDATE reservation SET id_type_pret = 1;
+ALTER TABLE reservation MODIFY COLUMN id_type_pret INT NOT NULL;
+ALTER TABLE reservation ADD CONSTRAINT fk_reservation_type_pret FOREIGN KEY (id_type_pret) REFERENCES type_pret(id_type_pret);

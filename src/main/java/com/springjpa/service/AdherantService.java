@@ -52,20 +52,38 @@ public class AdherantService {
         if (adherantOpt.isEmpty()) return false;
 
         var adherant = adherantOpt.get();
-        // Récupérer la dernière inscription active
-        var inscriptionOpt = inscriptionRepository.findTopByAdherantIdAdherantAndEtatOrderByDateInscriptionDesc(adherantId, true);
+        // Récupérer la dernière inscription active AVEC date_fin non nulle
+        var inscriptionOpt = inscriptionRepository.findAll().stream()
+            .filter(i -> i.getAdherant().getIdAdherant().equals(adherantId))
+            .filter(i -> Boolean.TRUE.equals(i.getEtat()))
+            .filter(i -> i.getDateFin() != null)
+            .sorted((a, b) -> b.getDateInscription().compareTo(a.getDateInscription()))
+            .findFirst();
         if (inscriptionOpt.isEmpty()) return false;
         var inscription = inscriptionOpt.get();
 
-        // Verifier la duree de l'inscription pour le profil
-        Profil profil = adherant.getProfil();
-        var inscriptionProfil = profilService.getInscriptionProfilByProfil(profil);
-        if (inscriptionProfil == null) return false;
-        int duree = inscriptionProfil.getDuree();
+        var now = java.time.LocalDateTime.now();
+        return (now.isEqual(inscription.getDateInscription()) || now.isAfter(inscription.getDateInscription()))
+            && now.isBefore(inscription.getDateFin());
+    }
 
-        // Calcul de la date limite
-        var dateLimite = inscription.getDateInscription().plusDays(duree);
-        return dateLimite.isAfter(java.time.LocalDateTime.now());
+    public boolean isInscri(Integer adherantId, java.time.LocalDateTime referenceDate) {
+        var adherantOpt = adherantRepository.findById(adherantId);
+        if (adherantOpt.isEmpty()) return false;
+
+        var adherant = adherantOpt.get();
+        var inscriptionOpt = inscriptionRepository.findAll().stream()
+            .filter(i -> i.getAdherant().getIdAdherant().equals(adherantId))
+            .filter(i -> Boolean.TRUE.equals(i.getEtat()))
+            .filter(i -> i.getDateFin() != null)
+            .sorted((a, b) -> b.getDateInscription().compareTo(a.getDateInscription()))
+            .findFirst();
+        if (inscriptionOpt.isEmpty()) return false;
+        var inscription = inscriptionOpt.get();
+
+        var now = referenceDate;
+        return (now.isEqual(inscription.getDateInscription()) || now.isAfter(inscription.getDateInscription()))
+            && now.isBefore(inscription.getDateFin());
     }
 
     public boolean isPenalise(Integer adherantId) {

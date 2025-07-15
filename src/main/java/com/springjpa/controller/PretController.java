@@ -114,17 +114,11 @@ public class PretController {
             return "faire-pret";
         }
         TypePret typePret = typePretService.findById(idTypePret);
-        // Vérifier que l'adhérent est actif (inscription.etat = 1)
-        if (!adherantService.isInscri(idAdherant)) {
-            model.addAttribute("error", "L'adhérent n'est pas actif ou son inscription n'est pas valide.");
-            java.util.List<TypePret> types = typePretService.findAll();
-            model.addAttribute("typesPret", types);
-            return "faire-pret";
+        // Si le prêt est créé à partir d'une réservation, utiliser le type de prêt de la réservation
+        Reservation reservation = reservationService.findActiveReservationByExemplaireAndAdherant(idExemplaire, idAdherant);
+        if (reservation != null) {
+            typePret = reservation.getTypePret();
         }
-
-        // Générer un nouvel id_pret (auto ou max+1)
-        int newIdPret = pretService.findAll().stream().mapToInt(p -> p.getIdPret()).max().orElse(0) + 1;
-        
         // Convertir la date string en LocalDateTime
         java.time.LocalDateTime datePretDateTime;
         try {
@@ -138,6 +132,16 @@ public class PretController {
             model.addAttribute("typesPret", types);
             return "faire-pret";
         }
+        // Vérifier que l'adhérent est actif (inscription.etat = 1)
+        if (!adherantService.isInscri(idAdherant, datePretDateTime)) {
+            model.addAttribute("error", "L'adhérent n'est pas actif ou son inscription n'est pas valide.");
+            java.util.List<TypePret> types = typePretService.findAll();
+            model.addAttribute("typesPret", types);
+            return "faire-pret";
+        }
+
+        // Générer un nouvel id_pret (auto ou max+1)
+        int newIdPret = pretService.findAll().stream().mapToInt(p -> p.getIdPret()).max().orElse(0) + 1;
         
         // Vérifier que la date de prêt est après la date d'inscription
         if (!adherantService.isDatePretAfterInscription(idAdherant, datePretDateTime)) {
@@ -168,8 +172,8 @@ public class PretController {
         }
         
         // Vérifier les retards en cours par rapport à la date de prêt choisie
-        if (pretService.hasRetards(idAdherant, idProfil, datePretDateTime)) {
-            List<Pret> pretsEnRetard = pretService.getPretsEnRetard(idAdherant, idProfil, datePretDateTime);
+        if (pretService.hasRetards(idAdherant, idProfil, datePretDateTime, typePret.getType())) {
+            List<Pret> pretsEnRetard = pretService.getPretsEnRetard(idAdherant, idProfil, datePretDateTime, typePret.getType());
             model.addAttribute("error", "L'adhérent a des prêts en retard par rapport à la date de prêt choisie (" + pretsEnRetard.size() + " livre(s)). Veuillez d'abord rendre les livres en retard avant d'emprunter.");
             java.util.List<TypePret> types = typePretService.findAll();
             model.addAttribute("typesPret", types);
@@ -177,12 +181,28 @@ public class PretController {
         }
         
         // Calculer la date de fin de prêt
-        Integer dureePret = dureePretService.getDureeByProfil(idProfil);
+        Integer dureePret = dureePretService.getDureeByProfilEtType(idProfil, typePret.getType());
         LocalDateTime dateFinPret = datePretDateTime.plus(dureePret, ChronoUnit.DAYS);
-        
-        // Vérifier s'il y a des réservations actives pour cet exemplaire avant la date de fin de prêt
-        if (reservationService.hasActiveReservationsBeforeDate(idExemplaire, dateFinPret)) {
-            model.addAttribute("error", "Ce livre a des réservations actives avant la date de fin de prêt (" + dateFinPret.format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")) + "). Le prêt ne peut pas être effectué.");
+
+        // Vérifier s'il y a des réservations actives qui chevauchent la période du prêt
+        boolean conflitReservation = false;
+        LocalDateTime debutPret = datePretDateTime;
+        LocalDateTime finPret = dateFinPret;
+        for (Reservation r : reservationService.findAll()) {
+            if (!r.getExemplaire().getIdExemplaire().equals(idExemplaire)) continue;
+            if (r.getStatut().getIdStatut() != 1 && r.getStatut().getIdStatut() != 2) continue;
+            String typePretR = r.getTypePret().getType();
+            int dureeR = dureePretService.getDureeByProfilEtType(r.getAdherant().getProfil().getIdProfil(), typePretR);
+            LocalDateTime debutR = r.getDateDeReservation();
+            LocalDateTime finR = debutR.plusDays(dureeR);
+            boolean chevauchement = !(finPret.isBefore(debutR) || debutPret.isAfter(finR));
+            if (chevauchement) {
+                conflitReservation = true;
+                break;
+            }
+        }
+        if (conflitReservation) {
+            model.addAttribute("error", "Ce livre a des réservations actives qui chevauchent la période du prêt. Le prêt ne peut pas être effectué.");
             java.util.List<TypePret> types = typePretService.findAll();
             model.addAttribute("typesPret", types);
             return "faire-pret";
@@ -228,7 +248,8 @@ public class PretController {
             Pret pret = pretService.findById(idPret);
             // Date de début de la nouvelle période = date de fin théorique du prêt
             Integer idProfil = pret.getAdherant().getProfil().getIdProfil();
-            Integer duree = dureePretService.getDureeByProfil(idProfil);
+            String typePret = pret.getTypePret().getType();
+            Integer duree = dureePretService.getDureeByProfilEtType(idProfil, typePret);
             java.time.LocalDateTime dateDebutProlongement = pret.getDateDebut().plusDays(duree);
             java.time.LocalDateTime dateFinProlongement = pret.getDateDebut().plusDays(duree * 2);
             // Vérifier absence de réservation active sur toute la période du prolongement
@@ -258,6 +279,7 @@ public class PretController {
             reservation.setStatut(statut);
             reservation.setExemplaire(pret.getExemplaire());
             reservation.setAdherant(pret.getAdherant());
+            reservation.setTypePret(pret.getTypePret()); // Ajouté pour corriger le bug de typePret null
             reservationService.saveSansVerif(reservation);
             model.addAttribute("success", "Prolongement effectué : une nouvelle réservation a été créée à la date de fin du prêt normal.");
         } catch (Exception e) {

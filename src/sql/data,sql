@@ -54,8 +54,8 @@ INSERT INTO pret (id_pret, date_debut, id_admin, id_type_pret, id_exemplaire, id
 INSERT INTO pret (id_pret, date_debut, id_admin, id_type_pret, id_exemplaire, id_adherant) VALUES (2, '2024-06-02 10:00:00', 2, 2, 2, 2);
 
 -- Table reservation
-INSERT INTO reservation (id_reservation, date_de_reservation, id_admin, id_statut, id_exemplaire, id_adherant) VALUES (1, '2024-06-10 14:00:00', 1, 1, 1, 1);
-INSERT INTO reservation (id_reservation, date_de_reservation, id_admin, id_statut, id_exemplaire, id_adherant) VALUES (2, '2024-06-11 15:00:00', 2, 2, 2, 2);
+INSERT INTO reservation (id_reservation, date_de_reservation, id_admin, id_statut, id_exemplaire, id_adherant, id_type_pret) VALUES (1, '2024-06-10 14:00:00', 1, 1, 1, 1, 1);
+INSERT INTO reservation (id_reservation, date_de_reservation, id_admin, id_statut, id_exemplaire, id_adherant, id_type_pret) VALUES (2, '2024-06-11 15:00:00', 2, 2, 2, 2, 2);
 
 -- Table fin_pret
 INSERT INTO fin_pret (id_fin_pret, date_fin, id_pret) VALUES (1, '2024-06-15 09:00:00', 1);

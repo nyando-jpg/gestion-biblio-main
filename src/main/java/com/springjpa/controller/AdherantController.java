@@ -91,36 +91,33 @@ public class AdherantController {
     @PostMapping("/adherants/abonnement")
     public String traiterAbonnement(@RequestParam("idAdherant") int idAdherant,
                                    @RequestParam("dateInscription") String dateInscription,
+                                   @RequestParam("dateFin") String dateFin,
                                    Model model) {
         try {
             Adherant adherant = adherantService.findById(idAdherant);
-            
-            // Convertir la date string en LocalDateTime
+            // Convertir les dates string en LocalDateTime
             java.time.LocalDateTime dateInscriptionDateTime;
+            java.time.LocalDateTime dateFinDateTime;
             try {
-                if (dateInscription.length() == 16) { // Format "2025-07-25T12:13"
-                    dateInscription += ":00"; // Ajouter les secondes
-                }
+                if (dateInscription.length() == 16) dateInscription += ":00";
+                if (dateFin.length() == 16) dateFin += ":00";
                 dateInscriptionDateTime = java.time.LocalDateTime.parse(dateInscription);
+                dateFinDateTime = java.time.LocalDateTime.parse(dateFin);
             } catch (Exception e) {
                 model.addAttribute("error", "Format de date invalide. Utilisez le format: AAAA-MM-JJ HH:MM");
-                model.addAttribute("adherant", adherant);
                 return "faire-abonnement";
             }
-            
-            // Créer une nouvelle inscription avec etat = true
+            // Générer un nouvel id_inscription
             Integer newInscriptionId = adherantService.getNextInscriptionId();
             com.springjpa.entity.Inscription inscription = new com.springjpa.entity.Inscription(
                 newInscriptionId, dateInscriptionDateTime, true, adherant
             );
+            inscription.setDateFin(dateFinDateTime);
             adherantService.saveInscription(inscription);
-            
-            return "redirect:/adherants";
-            
+            model.addAttribute("success", "Abonnement enregistré avec succès.");
+            return "faire-abonnement";
         } catch (Exception e) {
-            model.addAttribute("error", "Erreur lors de l'abonnement : " + e.getMessage());
-            Adherant adherant = adherantService.findById(idAdherant);
-            model.addAttribute("adherant", adherant);
+            model.addAttribute("error", "Erreur lors de l'enregistrement de l'abonnement : " + e.getMessage());
             return "faire-abonnement";
         }
     }

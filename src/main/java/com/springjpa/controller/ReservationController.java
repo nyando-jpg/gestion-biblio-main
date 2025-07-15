@@ -30,6 +30,9 @@ public class ReservationController {
     @Autowired
     private StatutReservationService statutReservationService;
 
+    @Autowired
+    private TypePretService typePretService;
+
     @GetMapping("/reservations")
     public String listerReservations(Model model) {
         model.addAttribute("reservations", reservationService.findAll());
@@ -42,9 +45,11 @@ public class ReservationController {
         // Récupérer les listes pour les dropdowns
         List<Adherant> adherants = adherantService.findAll();
         List<Exemplaire> exemplaires = exemplaireService.findAll();
+        List<TypePret> typesPret = typePretService.findAll();
         
         model.addAttribute("adherants", adherants);
         model.addAttribute("exemplaires", exemplaires);
+        model.addAttribute("typesPret", typesPret);
         
         return "ajouter-reservation";
     }
@@ -53,6 +58,7 @@ public class ReservationController {
     @PostMapping("/reservations/creer")
     public String creerReservation(@RequestParam("idAdherant") int idAdherant,
                                    @RequestParam("idExemplaire") int idExemplaire,
+                                   @RequestParam("idTypePret") int idTypePret,
                                    @RequestParam("dateReservation") String dateReservation,
                                    HttpSession session,
                                    Model model) {
@@ -67,6 +73,7 @@ public class ReservationController {
             Admin admin = adminService.findById(idAdmin);
             Adherant adherant = adherantService.findById(idAdherant);
             Exemplaire exemplaire = exemplaireService.findById(idExemplaire);
+            TypePret typePret = typePretService.findById(idTypePret);
             // Statut par défaut "En attente" (id = 1)
             StatutReservation statut = statutReservationService.findById(1);
             
@@ -109,6 +116,7 @@ public class ReservationController {
             reservation.setStatut(statut);
             reservation.setExemplaire(exemplaire);
             reservation.setAdherant(adherant);
+            reservation.setTypePret(typePret);
             
             reservationService.save(reservation);
             
@@ -121,13 +129,46 @@ public class ReservationController {
         }
     }
     
+    // Valider une réservation (changer le statut de "En attente" à "Validée")
+    @PostMapping("/reservations/valider")
+    public String validerReservation(@RequestParam("idReservation") int idReservation, Model model) {
+        try {
+            Reservation reservation = reservationService.findById(idReservation);
+            
+            if (reservation == null) {
+                model.addAttribute("error", "Réservation introuvable.");
+                return "redirect:/reservations";
+            }
+            
+            if (reservation.getStatut().getIdStatut() != 1) {
+                model.addAttribute("error", "Cette réservation ne peut pas être validée (statut actuel : " + reservation.getStatut().getNomStatut() + ").");
+                return "redirect:/reservations";
+            }
+            
+            // Changer le statut à "Validée" (id = 2)
+            StatutReservation statutValidee = statutReservationService.findById(2);
+            reservation.setStatut(statutValidee);
+            
+            reservationService.save(reservation);
+            
+            model.addAttribute("success", "La réservation a été validée avec succès !");
+            
+        } catch (Exception e) {
+            model.addAttribute("error", "Erreur lors de la validation : " + e.getMessage());
+        }
+        
+        return "redirect:/reservations";
+    }
+    
     // Méthode utilitaire pour recharger le formulaire avec les données
     private String rechargerFormulaire(Model model) {
         List<Adherant> adherants = adherantService.findAll();
         List<Exemplaire> exemplaires = exemplaireService.findAll();
+        List<TypePret> typesPret = typePretService.findAll();
         
         model.addAttribute("adherants", adherants);
         model.addAttribute("exemplaires", exemplaires);
+        model.addAttribute("typesPret", typesPret);
         
         return "ajouter-reservation";
     }

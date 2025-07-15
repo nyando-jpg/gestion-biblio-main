@@ -72,7 +72,8 @@ public class FinPretController {
 
             // 6. Vérifier le retard et appliquer une pénalité si besoin
             Integer idProfil = pret.getAdherant().getProfil().getIdProfil();
-            Integer dureeAutorisee = dureePretService.getDureeByProfil(idProfil);
+            String typePret = pret.getTypePret().getType();
+            Integer dureeAutorisee = dureePretService.getDureeByProfilEtType(idProfil, typePret);
             LocalDateTime dateLimite = pret.getDateDebut().plusDays(dureeAutorisee);
             if (dateFin.isAfter(dateLimite)) {
                 // Générer un nouvel id_penalite

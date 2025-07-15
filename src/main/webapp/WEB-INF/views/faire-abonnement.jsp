@@ -33,8 +33,12 @@
         <input type="hidden" name="idAdherant" value="${adherant.idAdherant}">
         
         <div>
-            <label for="dateInscription">Date d'inscription :</label>
+            <label for="dateInscription">Date de début d'abonnement :</label>
             <input type="datetime-local" name="dateInscription" id="dateInscription" required>
+        </div>
+        <div>
+            <label for="dateFin">Date de fin d'abonnement :</label>
+            <input type="datetime-local" name="dateFin" id="dateFin" required>
         </div>
         
         <button type="submit">Activer l'abonnement</button>

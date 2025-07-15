@@ -14,6 +14,9 @@
         table { border-collapse: collapse; width: 90%; margin: 20px auto; background: #fff; }
         th, td { border: 1px solid #bbb; padding: 8px; text-align: center; }
         th { background: #e0e0e0; color: #222; }
+        .btn-validate { background: #28a745; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer; }
+        .btn-validate:hover { background: #218838; }
+        .status-validated { color: #28a745; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -21,6 +24,19 @@
     <div style="text-align:center;">
         <a href="${pageContext.request.contextPath}/reservations/ajouter" style="display:inline-block;margin:20px 0 20px 0;padding:10px 18px;background:#20c997;color:#fff;text-decoration:none;border-radius:4px;">Faire une reservation</a>
     </div>
+    
+    <c:if test="${not empty success}">
+        <div style="background-color: #d4edda; color: #155724; padding: 10px; margin: 10px 0; border: 1px solid #c3e6cb;">
+            ${success}
+        </div>
+    </c:if>
+    
+    <c:if test="${not empty error}">
+        <div style="background-color: #f8d7da; color: #721c24; padding: 10px; margin: 10px 0; border: 1px solid #f5c6cb;">
+            ${error}
+        </div>
+    </c:if>
+    
     <table>
         <thead>
             <tr>
@@ -30,6 +46,7 @@
                 <th>Statut</th>
                 <th>Exemplaire</th>
                 <th>Adherent</th>
+                <th>Action</th>
             </tr>
         </thead>
         <tbody>
@@ -38,15 +55,26 @@
                     <td>${reservation.idReservation}</td>
                     <td>${reservation.dateDeReservation}</td>
                     <td>${reservation.admin.nomAdmin}</td>
-                    <td>${reservation.statut.nomStatut}</td>
+                    <td class="${reservation.statut.idStatut == 2 ? 'status-validated' : ''}">${reservation.statut.nomStatut}</td>
                     <td>${reservation.exemplaire.idExemplaire}</td>
                     <td>${reservation.adherant.nomAdherant}</td>
+                    <td>
+                        <c:if test="${reservation.statut.idStatut == 1}">
+                            <form action="${pageContext.request.contextPath}/reservations/valider" method="post" style="display: inline;">
+                                <input type="hidden" name="idReservation" value="${reservation.idReservation}">
+                                <button type="submit" class="btn-validate">Valider</button>
+                            </form>
+                        </c:if>
+                        <c:if test="${reservation.statut.idStatut == 2}">
+                            <span style="color: #28a745;">Validée</span>
+                        </c:if>
+                    </td>
                 </tr>
             </c:forEach>
         </tbody>
     </table>
     <div style="text-align:center;">
-        <a href="${pageContext.request.contextPath}/admin/home"><button type="button">Retour Admin</button></a>
+        <a href="${pageContext.request.contextPath}/" style="display:inline-block;margin:20px 0 20px 0;padding:10px 18px;background:#6c757d;color:#fff;text-decoration:none;border-radius:4px;">Retour à l'accueil</a>
     </div>
 </body>
 </html>

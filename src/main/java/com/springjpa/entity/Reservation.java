@@ -38,6 +38,10 @@ public class Reservation {
     @JoinColumn(name = "id_adherant", nullable = false)
     private Adherant adherant;
     
+    @ManyToOne
+    @JoinColumn(name = "id_type_pret", nullable = false)
+    private TypePret typePret;
+
     // Constructeurs
     public Reservation() {}
     
@@ -100,4 +104,7 @@ public class Reservation {
     public void setAdherant(Adherant adherant) {
         this.adherant = adherant;
     }
+
+    public TypePret getTypePret() { return typePret; }
+    public void setTypePret(TypePret typePret) { this.typePret = typePret; }
 }
