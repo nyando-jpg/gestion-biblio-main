@@ -2,89 +2,141 @@
 
 ## 1. Gestion des livres
 - **Fonctionnalités :**
-  - Ajouter, modifier, supprimer des livres.
-  - Associer un livre à un auteur, un éditeur, une ou plusieurs catégories.
-  - Afficher la liste des livres avec leurs informations (titre, ISBN, langue, année, synopsis, nombre de pages, éditeur, auteur, nombre d’exemplaires disponibles).
+  - Affichage de la liste des livres avec leurs informations (titre, ISBN, langue, année, synopsis, nombre de pages, éditeur, auteur).
+  - Consultation des détails d'un livre.
 - **Règles de gestion :**
   - Un livre doit obligatoirement avoir un auteur et un éditeur.
   - Un livre peut appartenir à plusieurs catégories.
-  - Le nombre d’exemplaires est calculé dynamiquement.
+  - Les livres sont pré-remplis dans la base de données.
 
 ## 2. Gestion des exemplaires
 - **Fonctionnalités :**
-  - Ajouter, modifier, supprimer des exemplaires de livres.
-  - Indiquer la disponibilité de chaque exemplaire.
+  - Affichage de la disponibilité de chaque exemplaire.
+  - Gestion automatique de la disponibilité lors des prêts et retours.
 - **Règles de gestion :**
   - Un exemplaire appartient à un seul livre.
-  - Un exemplaire ne peut être prêté ou réservé que s’il est disponible.
+  - Un exemplaire ne peut être prêté ou réservé que s'il est disponible.
+  - La disponibilité est mise à jour automatiquement lors des opérations.
 
 ## 3. Gestion des adhérents
 - **Fonctionnalités :**
-  - Ajouter, modifier, supprimer des adhérents.
-  - Associer un profil à chaque adhérent (ex : étudiant, professeur).
-  - Gérer l’inscription et l’état (actif/non actif) de chaque adhérent.
+  - Ajouter des adhérents avec un profil associé (étudiant, professeur).
+  - Gérer l'inscription et l'état (actif/non actif) de chaque adhérent.
+  - Afficher la liste des adhérents avec leur statut.
 - **Règles de gestion :**
   - Un adhérent doit avoir un profil qui définit ses quotas de prêt et de réservation.
-  - Un adhérent ne peut pas emprunter ou réserver s’il n’est pas actif.
+  - Un adhérent ne peut pas emprunter ou réserver s'il n'est pas actif.
+  - L'inscription a une date de début et une date de fin explicites.
 
 ## 4. Gestion des profils
 - **Fonctionnalités :**
-  - Définir des profils (ex : étudiant, professeur) avec des quotas de prêt et de réservation.
+  - Définir des profils (étudiant, professeur) avec des quotas de prêt et de réservation.
+  - Gestion des durées de prêt par profil.
 - **Règles de gestion :**
   - Chaque profil a un quota maximum de prêts et de réservations simultanés.
-  - La durée de prêt dépend du profil.
+  - La durée de prêt dépend du profil et du type de prêt.
 
-## 5. Gestion des prêts
+## 5. Gestion des types de prêt
 - **Fonctionnalités :**
-  - Enregistrer un prêt d’exemplaire à un adhérent.
+  - Définir des types de prêt (Normal, Longue durée).
+  - Gérer les durées selon le type de prêt.
+- **Règles de gestion :**
+  - Type "Normal" : durée de 1 jour.
+  - Type "Longue durée" : durée selon le profil de l'adhérent.
+  - Quotas spécifiques par type de prêt et profil.
+
+## 6. Gestion des prêts
+- **Fonctionnalités :**
+  - Enregistrer un prêt d'exemplaire à un adhérent.
   - Gérer la date de début et la date de fin de prêt.
   - Afficher la liste des prêts en cours et terminés.
+  - Prolonger un prêt existant.
 - **Règles de gestion :**
-  - Un adhérent ne peut pas dépasser son quota de prêts (défini par son profil).
-  - Un exemplaire ne peut être prêté que s’il est disponible.
-  - Un prêt est actif tant qu’il n’a pas de date de fin (fin_pret).
+  - Un adhérent ne peut pas dépasser son quota de prêts (défini par son profil et type de prêt).
+  - Un exemplaire ne peut être prêté que s'il est disponible.
+  - Un prêt est actif tant qu'il n'a pas de date de fin (fin_pret).
   - Un adhérent ayant des retards ne peut pas effectuer de nouveaux prêts.
+  - Prolongement : création automatique d'une réservation à la date de fin du prêt.
 
-## 6. Gestion des réservations
+## 7. Gestion des réservations
 - **Fonctionnalités :**
   - Permettre à un adhérent de réserver un exemplaire.
-  - Gérer le statut de la réservation (en attente, validée, etc.).
+  - Gérer le statut de la réservation (en attente, validée).
   - Afficher la liste des réservations.
+  - Valider une réservation via interface (bouton).
 - **Règles de gestion :**
   - Un adhérent ne peut pas dépasser son quota de réservations (défini par son profil).
-  - Un exemplaire ne peut être réservé que s’il n’est pas déjà réservé ou prêté à la même période.
-  - Un adhérent ne peut pas réserver s’il a des retards ou des pénalités.
+  - Un exemplaire ne peut être réservé que s'il n'est pas déjà réservé ou prêté à la même période.
+  - Un adhérent ne peut pas réserver s'il a des retards ou des pénalités.
+  - Validation manuelle des réservations par l'administrateur.
+  - Vérification des conflits de période (chevauchement).
 
-## 7. Gestion des pénalités
+## 8. Gestion des pénalités
 - **Fonctionnalités :**
   - Enregistrer une pénalité pour un adhérent en cas de retard.
   - Gérer la durée et la date de la pénalité.
+  - Afficher la liste des pénalités.
 - **Règles de gestion :**
   - Un adhérent pénalisé ne peut pas emprunter ni réserver pendant la durée de la pénalité.
+  - Vérification de la pénalité à la date de prêt/réservation.
 
-## 8. Gestion des administrateurs
+## 9. Gestion des administrateurs
 - **Fonctionnalités :**
   - Authentification des administrateurs.
   - Gestion des opérations (ajout, modification, suppression) sur tous les modules.
+  - Interface d'administration sécurisée.
 - **Règles de gestion :**
-  - Seuls les administrateurs peuvent accéder à l’interface d’administration.
+  - Seuls les administrateurs peuvent accéder à l'interface d'administration.
+  - Session utilisateur pour maintenir la connexion.
 
-## 9. Gestion des catégories, auteurs, éditeurs
+## 10. Gestion des catégories, auteurs, éditeurs
 - **Fonctionnalités :**
-  - Ajouter, modifier, supprimer des catégories, auteurs, éditeurs.
-  - Associer ces entités aux livres.
+  - Affichage des catégories, auteurs, éditeurs.
+  - Association de ces entités aux livres.
 - **Règles de gestion :**
   - Un livre doit avoir un auteur et un éditeur.
   - Les catégories sont optionnelles mais recommandées pour le classement.
+  - Données pré-remplies dans la base.
+
+## 11. Gestion des inscriptions (Abonnements)
+- **Fonctionnalités :**
+  - Créer des inscriptions avec dates de début et fin explicites.
+  - Gérer l'état actif/inactif des adhérents.
+  - Vérifier la validité des inscriptions.
+- **Règles de gestion :**
+  - Une inscription valide a une date de début et une date de fin.
+  - Un adhérent est actif si la date courante est entre la date de début et la date de fin.
+  - Vérification de l'inscription à la date de prêt/réservation.
+
+## 12. Gestion des retours de prêts
+- **Fonctionnalités :**
+  - Enregistrer le retour d'un exemplaire.
+  - Mettre à jour la disponibilité de l'exemplaire.
+  - Gérer les pénalités en cas de retard.
+- **Règles de gestion :**
+  - Un retour met l'exemplaire à disposition.
+  - Calcul automatique des retards et pénalités.
 
 ---
 
 ## Synthèse des principales règles de gestion
 
-- **Quota de prêt et réservation** : Dépend du profil de l’adhérent.
-- **Disponibilité des exemplaires** : Un exemplaire ne peut être prêté ou réservé que s’il est disponible.
+- **Quota de prêt et réservation** : Dépend du profil de l'adhérent et du type de prêt.
+- **Disponibilité des exemplaires** : Un exemplaire ne peut être prêté ou réservé que s'il est disponible.
 - **Retards et pénalités** : Un adhérent en retard ou pénalisé ne peut pas emprunter ni réserver.
-- **Statut d’adhérent** : Seuls les adhérents actifs peuvent emprunter ou réserver.
+- **Statut d'adhérent** : Seuls les adhérents actifs (inscription valide) peuvent emprunter ou réserver.
 - **Gestion des conflits** : Impossible de réserver ou prêter un exemplaire déjà réservé ou prêté pour la même période.
+- **Types de prêt** : Durées variables selon le type (Normal = 1 jour, Longue durée = selon profil).
+- **Prolongement** : Création automatique d'une réservation lors du prolongement d'un prêt.
+- **Validation des réservations** : Interface de validation manuelle par l'administrateur.
 
 ---
+
+## Fonctionnalités techniques implémentées
+
+- **Interface web** : JSP avec design responsive
+- **Base de données** : MySQL/MariaDB avec relations JPA
+- **Framework** : Spring Boot avec Spring MVC
+- **Sécurité** : Authentification administrateur avec sessions
+- **Validation** : Vérifications métier complètes avant chaque opération
+- **Gestion d'erreurs** : Messages d'erreur explicites pour l'utilisateur
