@@ -226,16 +226,17 @@ public class PretController {
     public String traiterProlongement(@RequestParam("idPret") int idPret, HttpSession session, Model model) {
         try {
             Pret pret = pretService.findById(idPret);
-            // Date de début de la nouvelle réservation = date de fin théorique du prêt
+            // Date de début de la nouvelle période = date de fin théorique du prêt
             Integer idProfil = pret.getAdherant().getProfil().getIdProfil();
             Integer duree = dureePretService.getDureeByProfil(idProfil);
             java.time.LocalDateTime dateDebutProlongement = pret.getDateDebut().plusDays(duree);
-            // Vérifier absence de réservation active à la date de prolongement
-            boolean hasReservation = reservationService.hasActiveReservationsBeforeDate(
+            java.time.LocalDateTime dateFinProlongement = pret.getDateDebut().plusDays(duree * 2);
+            // Vérifier absence de réservation active sur toute la période du prolongement
+            boolean conflitReservation = reservationService.hasActiveReservationsBeforeDate(
                 pret.getExemplaire().getIdExemplaire(),
-                dateDebutProlongement.plusSeconds(1)
+                dateFinProlongement
             );
-            if (hasReservation) {
+            if (conflitReservation) {
                 model.addAttribute("error", "Prolongement impossible : il existe déjà une réservation sur la période du prolongement.");
                 return "prolonger-pret";
             }

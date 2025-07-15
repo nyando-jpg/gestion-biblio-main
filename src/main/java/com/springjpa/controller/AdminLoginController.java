@@ -15,43 +15,7 @@ import com.springjpa.entity.Admin;
 public class AdminLoginController {
     
     @Autowired
-    private AdherantService adherantService;
-    
-    @Autowired
-    private LivreService livreService;
-    
-    @Autowired
-    private PretService pretService;
-    
-    @Autowired
-    private ReservationService reservationService;
-    
-    @Autowired
     private AdminService adminService;
-    
-    @Autowired
-    private AuteurService auteurService;
-    
-    @Autowired
-    private EditeurService editeurService;
-    
-    @Autowired
-    private CategorieService categorieService;
-    
-    @Autowired
-    private ExemplaireService exemplaireService;
-    
-    @Autowired
-    private PenaliteService penaliteService;
-    
-    @Autowired
-    private ProfilService profilService;
-    
-    @Autowired
-    private TypePretService typePretService;
-    
-    @Autowired
-    private StatutReservationService statutReservationService;
 
     @GetMapping("/admin/home")
     public String adminHome() {
@@ -76,26 +40,5 @@ public class AdminLoginController {
             mv.addObject("loginError", true);
             return mv;
         }
-    }
-
-    // Nouvelle méthode pour afficher toutes les tables
-    @GetMapping("/admin/tables")
-    public String showAllTables(Model model) {
-        // Récupérer toutes les données de chaque table
-        model.addAttribute("adherants", adherantService.findAll());
-        model.addAttribute("livres", livreService.findAll());
-        model.addAttribute("prets", pretService.findAll());
-        model.addAttribute("reservations", reservationService.findAll());
-        model.addAttribute("admins", adminService.findAll());
-        model.addAttribute("auteurs", auteurService.findAll());
-        model.addAttribute("editeurs", editeurService.findAll());
-        model.addAttribute("categories", categorieService.findAll());
-        model.addAttribute("exemplaires", exemplaireService.findAll());
-        model.addAttribute("penalites", penaliteService.findAll());
-        model.addAttribute("profils", profilService.findAll());
-        model.addAttribute("typesPret", typePretService.findAll());
-        model.addAttribute("statutsReservation", statutReservationService.findAll());
-        
-        return "tables-view";
     }
 }
