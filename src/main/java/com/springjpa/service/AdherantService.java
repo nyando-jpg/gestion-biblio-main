@@ -114,4 +114,12 @@ public class AdherantService {
         // Vérifier que la date de prêt est après la date d'inscription
         return datePret.isAfter(inscription.getDateInscription());
     }
+
+    public java.util.Optional<com.springjpa.entity.Inscription> getLastActiveInscription(Integer adherantId) {
+        return inscriptionRepository.findTopByAdherantIdAdherantAndEtatOrderByDateInscriptionDesc(adherantId, true);
+    }
+
+    public java.util.Optional<com.springjpa.entity.Inscription> getLastInscription(Integer adherantId) {
+        return inscriptionRepository.findTopByAdherantIdAdherantOrderByIdInscriptionDesc(adherantId);
+    }
 }
