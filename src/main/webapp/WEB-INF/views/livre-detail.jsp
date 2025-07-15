@@ -20,7 +20,7 @@
 </head>
 <body>
     <div class="container">
-        <h2>Détail du livre</h2>
+        <h2>Detail du livre</h2>
         <table>
             <c:forEach var="entry" items="${jsonLivreSimple.entrySet()}">
                 <tr>

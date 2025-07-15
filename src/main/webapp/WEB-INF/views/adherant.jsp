@@ -42,6 +42,9 @@
                 </td>
                 <td>
                     <a href="${pageContext.request.contextPath}/adherants/${a.idAdherant}" style="background: #007bff; color: white; padding: 5px 10px; text-decoration: none; border-radius: 3px;">Detail</a>
+                    <c:if test="${a.statusAdherant ne 'Actif'}">
+                        <a href="${pageContext.request.contextPath}/adherants/abonnement?id=${a.idAdherant}" style="background: #28a745; color: white; padding: 5px 10px; text-decoration: none; border-radius: 3px; margin-top: 5px; display: inline-block;">Faire abonnement</a>
+                    </c:if>
                 </td>
             </tr>
         </c:forEach>

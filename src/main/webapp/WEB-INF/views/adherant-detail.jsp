@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Détail de l'adhérent</title>
+    <title>Detail de l'adherent</title>
     <style>
         body { font-family: Arial, sans-serif; margin: 40px; background: #f7f7f7; color: #222; }
         .container { max-width: 700px; margin: 0 auto; background: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 2px 8px #ddd; }
@@ -16,7 +16,7 @@
 </head>
 <body>
     <div class="container">
-        <h2>Détail de l'adhérent</h2>
+        <h2>Detail de l'adherent</h2>
         <table>
             <c:forEach var="entry" items="${adherantSimple.entrySet()}">
                 <tr>
@@ -25,21 +25,21 @@
                 </tr>
             </c:forEach>
             <tr>
-                <th>Date début abonnement</th>
+                <th>Date debut abonnement</th>
                 <td>${adherantSimple.dateDebutAbonnement != null ? adherantSimple.dateDebutAbonnement : ''}</td>
             </tr>
             <tr>
-                <th>Durée abonnement (jours)</th>
+                <th>Duree abonnement (jours)</th>
                 <td>${adherantSimple.dureeAbonnementJours != null ? adherantSimple.dureeAbonnementJours : ''}</td>
             </tr>
         </table>
         <c:if test="${not empty penalitesEnCours}">
-            <h3>Pénalités en cours</h3>
+            <h3>Penalites en cours</h3>
             <table>
                 <tr>
-                    <th>Date début</th>
-                    <th>Durée (jours)</th>
-                    <th>Fin de pénalité</th>
+                    <th>Date debut</th>
+                    <th>Duree (jours)</th>
+                    <th>Fin de penalite</th>
                 </tr>
                 <c:forEach var="p" items="${penalitesEnCours}">
                     <tr>
@@ -50,10 +50,10 @@
                 </c:forEach>
             </table>
         </c:if>
-        <h3>Quotas de prêt</h3>
+        <h3>Quotas de pret</h3>
         <table>
             <tr>
-                <th>Type de prêt</th>
+                <th>Type de pret</th>
                 <th>Quota</th>
                 <th>Max</th>
             </tr>
@@ -65,7 +65,7 @@
                 </tr>
             </c:forEach>
         </table>
-        <a href="${pageContext.request.contextPath}/adherants">Retour à la liste des adhérents</a>
+        <a href="${pageContext.request.contextPath}/adherants">Retour à la liste des adherents</a>
     </div>
 </body>
 </html> 
