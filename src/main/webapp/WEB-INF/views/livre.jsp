@@ -33,7 +33,7 @@
             <th>Nb exemplaires</th>
         </tr>
         <c:forEach var="l" items="${livres}">
-            <tr>
+            <tr style="cursor:pointer;" onclick="window.location='${pageContext.request.contextPath}/livres/${l.idLivre}'">
                 <td>${l.idLivre}</td>
                 <td>${l.titre}</td>
                 <td>${l.isbn}</td>

@@ -9,4 +9,6 @@ import com.springjpa.entity.Inscription;
 @Repository
 public interface InscriptionRepository extends JpaRepository<Inscription, Integer> {
     Optional<Inscription> findTopByAdherantIdAdherantAndEtatOrderByDateInscriptionDesc(Integer adherantId, boolean etat);
+    Optional<Inscription> findTopByAdherantIdAdherantOrderByDateInscriptionDesc(Integer adherantId);
+    Optional<Inscription> findTopByAdherantIdAdherantOrderByIdInscriptionDesc(Integer adherantId);
 }

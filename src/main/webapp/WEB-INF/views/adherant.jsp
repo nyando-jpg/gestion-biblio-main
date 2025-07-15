@@ -41,17 +41,7 @@
                     </c:choose>
                 </td>
                 <td>
-                    <c:choose>
-                        <c:when test="${a.statusAdherant eq 'Actif'}">
-                            <span style="color: green;">Actif</span>
-                        </c:when>
-                        <c:otherwise>
-                            <a href="${pageContext.request.contextPath}/adherants/abonnement?id=${a.idAdherant}" 
-                               style="background: #007bff; color: white; padding: 5px 10px; text-decoration: none; border-radius: 3px;">
-                                Faire abonnement
-                            </a>
-                        </c:otherwise>
-                    </c:choose>
+                    <a href="${pageContext.request.contextPath}/adherants/${a.idAdherant}" style="background: #007bff; color: white; padding: 5px 10px; text-decoration: none; border-radius: 3px;">Detail</a>
                 </td>
             </tr>
         </c:forEach>
