@@ -18,6 +18,7 @@ import com.springjpa.service.ProfilService;
 import com.springjpa.service.TypePretService;
 import org.springframework.web.bind.annotation.PathVariable;
 import com.springjpa.service.FinPretService;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.HashMap;
 import java.util.List;
@@ -191,5 +192,84 @@ public class AdherantController {
         model.addAttribute("quotas", quotas);
         model.addAttribute("penalitesEnCours", penalitesEnCours);
         return "adherant-detail";
+    }
+
+    @GetMapping("/api/adherants/{id}")
+    @ResponseBody
+    public Map<String, Object> getAdherantJson(@PathVariable Integer id) {
+        var adherant = adherantService.findById(id);
+        Map<String, Object> simpleAdherant = new HashMap<>();
+        simpleAdherant.put("idAdherant", adherant.getIdAdherant());
+        simpleAdherant.put("nom", adherant.getNomAdherant());
+        simpleAdherant.put("prenom", adherant.getPrenomAdherant());
+        simpleAdherant.put("profil", adherant.getProfil() != null ? adherant.getProfil().getNomProfil() : "");
+        
+        // Abonnement : date début et durée (même si non actif)
+        java.time.LocalDateTime dateDebutAbonnement = null;
+        Integer dureeAbonnementJours = null;
+        var lastInscriptionOpt = adherantService.getLastInscription(id);
+        if (lastInscriptionOpt.isPresent()) {
+            var inscription = lastInscriptionOpt.get();
+            dateDebutAbonnement = inscription.getDateInscription();
+            var inscriptionProfil = adherant.getProfil() != null ? profilService.getInscriptionProfilByProfil(adherant.getProfil()) : null;
+            if (inscriptionProfil != null) {
+                dureeAbonnementJours = inscriptionProfil.getDuree();
+            }
+        }
+        simpleAdherant.put("dateDebutAbonnement", dateDebutAbonnement != null ? dateDebutAbonnement : "");
+        simpleAdherant.put("dureeAbonnementJours", dureeAbonnementJours != null ? dureeAbonnementJours : "");
+        
+        // Pénalités en cours
+        List<Map<String, Object>> penalitesEnCours = new java.util.ArrayList<>();
+        var penalites = penaliteService.findByAdherantId(id);
+        var now = java.time.LocalDateTime.now();
+        for (var p : penalites) {
+            var fin = p.getDatePenalite().plusDays(p.getDuree());
+            if (now.isBefore(fin)) {
+                Map<String, Object> pen = new HashMap<>();
+                pen.put("dateDebut", p.getDatePenalite());
+                pen.put("dureeJours", p.getDuree());
+                pen.put("finPenalite", fin);
+                penalitesEnCours.add(pen);
+            }
+        }
+        simpleAdherant.put("penalitesEnCours", penalitesEnCours);
+        
+        // Abonnement actif ?
+        boolean inscrit = adherantService.isInscri(id);
+        simpleAdherant.put("abonnementActif", inscrit ? "Oui" : "Non");
+        
+        // Quotas
+        var profil = adherant.getProfil();
+        List<Map<String, Object>> quotas = new java.util.ArrayList<>();
+        if (profil != null) {
+            var typesPret = typePretService.findAll();
+            for (var typePret : typesPret) {
+                Integer quota = quotaTypePretService.getQuotaByProfilAndTypePret(profil.getIdProfil(), typePret.getIdTypePret());
+                long enCours = pretService.findAll().stream()
+                    .filter(p -> p.getAdherant().getIdAdherant().equals(id)
+                        && p.getTypePret().getIdTypePret().equals(typePret.getIdTypePret())
+                        && finPretService.findAll().stream().noneMatch(fp -> fp.getPret().getIdPret().equals(p.getIdPret())))
+                    .count();
+                Map<String, Object> q = new HashMap<>();
+                q.put("typePret", typePret.getType());
+                q.put("quota", enCours);
+                q.put("max", quota);
+                quotas.add(q);
+            }
+        }
+        
+        long nbPrets = pretService.findAll().stream()
+            .filter(p -> p.getAdherant().getIdAdherant().equals(id)
+                && finPretService.findAll().stream().noneMatch(fp -> fp.getPret().getIdPret().equals(p.getIdPret())))
+            .count();
+        simpleAdherant.put("nombrePretsActuels", nbPrets);
+        
+        Map<String, Object> result = new HashMap<>();
+        result.put("adherant", simpleAdherant);
+        result.put("quotas", quotas);
+        result.put("penalitesEnCours", penalitesEnCours);
+        
+        return result;
     }
 }

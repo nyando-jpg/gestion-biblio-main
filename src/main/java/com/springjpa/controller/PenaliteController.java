@@ -35,7 +35,7 @@ public class PenaliteController {
 
     @PostMapping("/penalites/ajouter")
     public String ajouterPenalite(@RequestParam("idAdherant") int idAdherant,
-                                  @RequestParam("duree") int duree,
+                                  //@RequestParam("duree") int duree, // On ne prend plus la durée du formulaire
                                   @RequestParam("datePenalite") String datePenaliteStr,
                                   Model model) {
         try {
@@ -50,6 +50,16 @@ public class PenaliteController {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
             LocalDateTime datePenalite = LocalDateTime.parse(datePenaliteStr, formatter);
             
+            // Déterminer la durée selon le profil
+            int duree = 10; // Par défaut étudiant
+            if (adherant.getProfil() != null) {
+                String nomProfil = adherant.getProfil().getNomProfil().toLowerCase();
+                if (nomProfil.contains("enseignant")) {
+                    duree = 9;
+                } else if (nomProfil.contains("professionnel")) {
+                    duree = 8;
+                }
+            }
             // Générer un nouvel ID pour la pénalité
             int newIdPenalite = penaliteService.findAll().stream()
                 .mapToInt(p -> p.getIdPenalite())
@@ -62,7 +72,7 @@ public class PenaliteController {
             penalite.setDuree(duree);
             penalite.setDatePenalite(datePenalite);
             penaliteService.save(penalite);
-            model.addAttribute("success", "La pénalité a bien été ajoutée.");
+            model.addAttribute("success", "La pénalité a bien été ajoutée (" + duree + " jours).");
             return "ajouter-penalite";
         } catch (Exception e) {
             model.addAttribute("error", "Erreur lors de l'ajout de la pénalité : " + e.getMessage());

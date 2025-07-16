@@ -83,12 +83,22 @@ public class FinPretController {
                     .orElse(0) + 1;
                 Penalite penalite = new Penalite();
                 penalite.setIdPenalite(newIdPenalite);
-                penalite.setDuree(10); // 10 jours par défaut
+                // Déterminer la durée selon le profil
+                int duree = 10; // Par défaut étudiant
+                if (pret.getAdherant().getProfil() != null) {
+                    String nomProfil = pret.getAdherant().getProfil().getNomProfil().toLowerCase();
+                    if (nomProfil.contains("enseignant")) {
+                        duree = 9;
+                    } else if (nomProfil.contains("professionnel")) {
+                        duree = 8;
+                    }
+                }
+                penalite.setDuree(duree);
                 penalite.setDatePenalite(dateFin);
                 Adherant adherant = adherantService.findById(idAdherant);
                 penalite.setAdherant(adherant);
                 penaliteService.save(penalite);
-                model.addAttribute("info", "Retour en retard : une pénalité de 10 jours a été appliquée.");
+                model.addAttribute("info", "Retour en retard : une pénalité de " + duree + " jours a été appliquée.");
             }
 
             model.addAttribute("success", "Retour de prêt enregistré avec succès.");
